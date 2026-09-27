@@ -1,0 +1,6 @@
+{
+  "name": "ProjectVerse",
+  "description": "Institutional project memory and generational lineage platform. Preserving project knowledge, factual evidence, reviews, and handover so student projects continue after graduation.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
