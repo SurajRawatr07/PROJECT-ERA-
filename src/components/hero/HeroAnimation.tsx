@@ -44,7 +44,7 @@ export const HeroAnimation: React.FC = () => {
             <span className="h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full bg-amber-400/90" />
             <span className="h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full bg-emerald-400/90" />
             <span className="ml-2 text-[10px] sm:text-[11px] font-mono font-medium text-neutral-400 tracking-wider">
-              projectverse://collaborate
+              projectera://collaborate
             </span>
           </div>
           <div className="flex items-center gap-1.5 px-2 sm:px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200/70 text-[9px] sm:text-[10px] font-semibold text-emerald-800">

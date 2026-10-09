@@ -57,9 +57,9 @@ export const ProjectVerseWordmark: React.FC<ProjectVerseWordmarkProps> = ({
         interactiveHover ? 'transition-colors duration-200 ease-out hover:text-[#e8860a] cursor-pointer' : ''
       } ${className}`}
       role="img"
-      aria-label="ProjectVerse"
+      aria-label="Project Era"
     >
-      ProjectVerse
+      Project Era
     </span>
   );
 };

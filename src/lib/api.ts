@@ -12,7 +12,7 @@ async function request<T = any>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<ApiResponse<T>> {
-  const token = sessionService.getAuthToken();
+  const token = sessionService.getSession()?.token;
   const headers: Record<string, string> = {
     ...(options.headers as Record<string, string>)
   };
