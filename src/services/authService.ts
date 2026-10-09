@@ -4,10 +4,44 @@ import {
   AuthUser,
   RegisterData
 } from '../types/auth';
-import { userService } from './userService';
 import { sessionService } from './sessionService';
 import { isValidEmail, normalizeEmail } from '../utils/validation';
 import { validatePassword } from '../utils/password';
+import { storageAdapter } from './storageAdapter';
+
+function mapApiUserToAuthUser(apiUser: any): AuthUser {
+  return {
+    id: apiUser.id || apiUser._id,
+    name: apiUser.fullName || apiUser.name || 'User',
+    email: apiUser.email,
+    role: apiUser.role,
+    avatar: apiUser.avatar,
+    profile: {
+      institution: apiUser.institution,
+      department: apiUser.department,
+      designation: apiUser.designation,
+      course: apiUser.course,
+      program: apiUser.course,
+      batch: apiUser.batch,
+      academicYear: apiUser.academicYear || apiUser.batch,
+      rollNumber: apiUser.rollNumber,
+      accountType: apiUser.studentType,
+      employeeId: apiUser.facultyId,
+      skills: apiUser.skills || [],
+      bio: apiUser.bio || '',
+      github: apiUser.githubHandle ? `https://github.com/${apiUser.githubHandle}` : undefined,
+      githubHandle: apiUser.githubHandle,
+      linkedin: apiUser.linkedIn,
+      portfolio: apiUser.portfolio,
+      verifiedStatus: apiUser.verificationStatus === 'VERIFIED' ? 'Verified' : 'Pending Verification',
+      projectsCount: apiUser.projectsCount || 0,
+      commitsCount: apiUser.commitsCount || 0,
+      rubricScore: 9.0
+    },
+    createdAt: apiUser.createdAt || new Date().toISOString(),
+    updatedAt: apiUser.updatedAt || new Date().toISOString()
+  };
+}
 
 export class FrontendAuthService implements AuthServiceContract {
   async register(data: RegisterData): Promise<AuthResult> {
@@ -22,23 +56,15 @@ export class FrontendAuthService implements AuthServiceContract {
         return { success: false, error: 'Please enter a valid email address.' };
       }
 
-      // 2. Prevent duplicate email (case-insensitive)
-      if (userService.emailExists(normalizedEmail)) {
-        return {
-          success: false,
-          error: 'An account with this email already exists. Please sign in instead.'
-        };
-      }
-
-      // 3. Prevent public ADMIN registration
+      // 2. Prevent public ADMIN registration
       if ((data.role as string) === 'ADMIN') {
         return {
           success: false,
-          error: 'Administrator accounts cannot be registered publicly. System admin accounts are provisioned directly by the platform authority.'
+          error: 'Administrator accounts cannot be registered publicly.'
         };
       }
 
-      // 4. Password validation
+      // 3. Password validation
       const passResult = validatePassword(data.password);
       if (!passResult.isValid) {
         return {
@@ -47,134 +73,122 @@ export class FrontendAuthService implements AuthServiceContract {
         };
       }
 
-      // 5. Role-specific validation
-      if (data.role === 'STUDENT') {
-        const p = data.studentProfile;
-        if (!p?.institution || p.institution.trim().length < 2) {
-          return { success: false, error: 'Please specify your institution or university.' };
-        }
-        if (!p?.course && !p?.program) {
-          return { success: false, error: 'Please specify your course or academic degree.' };
-        }
-        if (!p?.rollNumber || p.rollNumber.trim().length < 2) {
-          return { success: false, error: 'Please provide your roll number or student ID.' };
-        }
-      } else if (data.role === 'FACULTY') {
-        const p = data.facultyProfile;
-        if (!p?.institution || p.institution.trim().length < 2) {
-          return { success: false, error: 'Please specify your institution or university.' };
-        }
-        if (!p?.department || p.department.trim().length < 2) {
-          return { success: false, error: 'Please specify your department.' };
-        }
-        if (!p?.designation || p.designation.trim().length < 2) {
-          return { success: false, error: 'Please specify your academic designation.' };
-        }
-        if (!p?.employeeId || p.employeeId.trim().length < 2) {
-          return { success: false, error: 'Please provide your Faculty / Employee ID.' };
-        }
-      } else if (data.role === 'RESEARCHER') {
-        const p = data.researcherProfile;
-        if (!p?.institution || p.institution.trim().length < 2) {
-          return { success: false, error: 'Please specify your institution or research organization.' };
-        }
-        if (!p?.researchDomain || p.researchDomain.trim().length < 2) {
-          return { success: false, error: 'Please specify your research domain or field.' };
-        }
-      } else if (data.role === 'ALUMNI') {
-        const p = data.alumniProfile;
-        if (!p?.previousInstitution || p.previousInstitution.trim().length < 2) {
-          return { success: false, error: 'Please specify your graduating college or university.' };
-        }
-        if (!p?.degreeCourse || p.degreeCourse.trim().length < 2) {
-          return { success: false, error: 'Please specify your completed degree.' };
-        }
-      } else if (data.role === 'DEVELOPER') {
-        const p = data.developerProfile;
-        if (!p?.specialization || p.specialization.trim().length < 2) {
-          return { success: false, error: 'Please specify your specialization or current role.' };
-        }
-        if (!p?.github || p.github.trim().length < 3) {
-          return { success: false, error: 'Please provide your GitHub profile URL.' };
-        }
-      } else if (data.role === 'HOD') {
-        const p = data.hodProfile;
-        if (!p?.institution || p.institution.trim().length < 2) {
-          return { success: false, error: 'Please specify your institution or university.' };
-        }
-        if (!p?.department || p.department.trim().length < 2) {
-          return { success: false, error: 'Please specify your department.' };
-        }
-        if (!p?.employeeId || p.employeeId.trim().length < 2) {
-          return { success: false, error: 'Please provide your HOD Employee ID.' };
-        }
-      } else if (data.role === 'INSTITUTION') {
-        const p = data.institutionProfile;
-        if (!p?.institutionName || p.institutionName.trim().length < 2) {
-          return { success: false, error: 'Please specify your institution or university name.' };
-        }
-        if (!p?.website || p.website.trim().length < 4) {
-          return { success: false, error: 'Please provide your official institution website.' };
-        }
-        if (!p?.representativeName || p.representativeName.trim().length < 2) {
-          return { success: false, error: 'Please provide the authorized representative name.' };
-        }
-      } else if (data.role === 'INDUSTRY_PROFESSIONAL') {
-        const p = data.industryProfile;
-        if (!p?.company || p.company.trim().length < 2) {
-          return { success: false, error: 'Please specify your company or organization.' };
-        }
-        if (!p?.jobTitle || p.jobTitle.trim().length < 2) {
-          return { success: false, error: 'Please specify your job title.' };
-        }
-        if (!p?.linkedin || p.linkedin.trim().length < 4) {
-          return { success: false, error: 'Please provide your LinkedIn profile URL.' };
-        }
-      }
-
-      // 6. Create account locally
-      const createdUser = userService.createUserFromRegistration(data);
-
-      const userProfilePayload = {
-        id: createdUser.id,
-        email: createdUser.email,
-        fullName: createdUser.name,
-        role: createdUser.role,
-        avatar: createdUser.avatar,
-        institution: createdUser.profile.institution,
-        department: createdUser.profile.department,
-        course: createdUser.profile.course,
-        batch: createdUser.profile.batch,
-        rollNumber: createdUser.profile.rollNumber,
-        designation: createdUser.profile.designation,
-        facultyId: createdUser.profile.employeeId,
-        skills: createdUser.profile.skills || [],
-        bio: createdUser.profile.bio || '',
-        githubHandle: createdUser.profile.githubHandle,
-        verifiedStatus: 'Verified',
-        verificationSignals: {
-          emailVerified: true,
-          institutionalDomain: true,
-          idProofVerified: true,
-          nodeApproval: true
-        },
-        projectsCount: 0,
-        commitsCount: 0,
-        rubricScore: 9.0
+      // Prepare API payload
+      const payload: any = {
+        fullName: data.name.trim(),
+        email: normalizedEmail,
+        password: data.password,
+        role: data.role,
+        bio: data.bio || '',
+        avatar: data.avatar || `https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80`
       };
 
-      // 7. Establish active session automatically
+      if (data.role === 'STUDENT' && data.studentProfile) {
+        payload.institution = data.studentProfile.institution;
+        payload.course = data.studentProfile.course || data.studentProfile.program;
+        payload.rollNumber = data.studentProfile.rollNumber;
+        payload.batch = (data.studentProfile as any).batch || data.studentProfile.academicYear;
+        payload.skills = data.studentProfile.skills;
+        payload.githubHandle = data.studentProfile.github;
+        payload.linkedIn = data.studentProfile.linkedin;
+      } else if (data.role === 'FACULTY' && data.facultyProfile) {
+        payload.institution = data.facultyProfile.institution;
+        payload.department = data.facultyProfile.department;
+        payload.designation = data.facultyProfile.designation;
+        payload.facultyId = data.facultyProfile.employeeId;
+        payload.skills = data.facultyProfile.skills;
+        payload.githubHandle = data.facultyProfile.github;
+        payload.linkedIn = data.facultyProfile.linkedin;
+      } else if (data.role === 'RESEARCHER' && data.researcherProfile) {
+        payload.institution = data.researcherProfile.institution;
+        payload.designation = data.researcherProfile.designation;
+        payload.researchInterests = [data.researcherProfile.researchDomain];
+        payload.skills = data.researcherProfile.skills;
+      } else if (data.role === 'ALUMNI' && data.alumniProfile) {
+        payload.institution = data.alumniProfile.previousInstitution;
+        payload.course = data.alumniProfile.degreeCourse;
+        payload.graduationYear = data.alumniProfile.graduationYear;
+        payload.currentOrganization = data.alumniProfile.currentOrganization;
+        payload.currentJobRole = data.alumniProfile.currentJobRole;
+        payload.skills = data.alumniProfile.skills;
+      } else if (data.role === 'DEVELOPER' && data.developerProfile) {
+        payload.currentJobRole = data.developerProfile.specialization;
+        payload.skills = data.developerProfile.skills;
+        payload.githubHandle = data.developerProfile.github;
+        payload.portfolio = data.developerProfile.portfolio;
+      } else if (data.role === 'HOD' && data.hodProfile) {
+        payload.institution = data.hodProfile.institution;
+        payload.department = data.hodProfile.department;
+        payload.designation = data.hodProfile.designation;
+        payload.facultyId = data.hodProfile.employeeId;
+      } else if (data.role === 'INDUSTRY_PROFESSIONAL' && data.industryProfile) {
+        payload.currentOrganization = data.industryProfile.company;
+        payload.currentJobRole = data.industryProfile.jobTitle;
+        payload.skills = data.industryProfile.skills;
+        payload.linkedIn = data.industryProfile.linkedin;
+      } else if (data.role === 'INSTITUTION' && data.institutionProfile) {
+        payload.institution = data.institutionProfile.institutionName;
+        payload.institutionType = data.institutionProfile.institutionType;
+        payload.contactPerson = data.institutionProfile.representativeName;
+        payload.designation = data.institutionProfile.representativeDesignation;
+        payload.officialDomain = data.institutionProfile.officialEmail;
+        payload.website = data.institutionProfile.website;
+      }
+
+      if (data.documents && data.documents.length > 0) {
+        payload.documentType = data.documents[0].documentType;
+        payload.documentFileName = data.documents[0].fileName;
+        payload.documentFileSize = data.documents[0].fileSize;
+      }
+
+      // Call REST API
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const resData = await res.json();
+      if (!res.ok || !resData.success) {
+        return {
+          success: false,
+          error: resData.message || resData.error || 'Failed to complete registration.'
+        };
+      }
+
+      const authUser = mapApiUserToAuthUser(resData.user);
+
+      // Establish active session with complete profile fields
+      const sessionUser = {
+        id: authUser.id,
+        role: authUser.role,
+        fullName: authUser.name,
+        email: authUser.email,
+        avatar: authUser.avatar,
+        ...authUser.profile
+      };
+
       const session = sessionService.setSession(
-        createdUser.id,
-        createdUser.role,
-        undefined,
-        userProfilePayload
+        authUser.id,
+        authUser.role,
+        resData.token,
+        sessionUser
       );
+
+      // Sync legacy storage
+      try {
+        localStorage.setItem('pv_auth_token', resData.token);
+        const dbUsers = storageAdapter.getItem<any[]>('pv_user_database_v4', []);
+        dbUsers.push(sessionUser);
+        storageAdapter.setItem('pv_user_database_v4', dbUsers);
+      } catch {
+        // ignore
+      }
 
       return {
         success: true,
-        user: createdUser,
-        role: createdUser.role,
+        user: authUser,
+        role: authUser.role,
         token: session.token,
         message: 'Account registered successfully!'
       };
@@ -197,67 +211,51 @@ export class FrontendAuthService implements AuthServiceContract {
         return { success: false, error: 'Please enter your password.' };
       }
 
-      // Find user strictly by email
-      const user = userService.getByEmail(normalizedEmail);
-      if (!user) {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: normalizedEmail, password: passwordInput })
+      });
+
+      const resData = await res.json();
+      if (!res.ok || !resData.success) {
         return {
           success: false,
-          error: 'No account found with this email address. Please check your credentials or create an account.'
+          error: resData.message || resData.error || 'Authentication failed. Please verify your credentials.'
         };
       }
 
-      // Verify password
-      const storedPassword = user.password || '';
-      const isPasswordMatch =
-        storedPassword === passwordInput ||
-        storedPassword.toLowerCase() === passwordInput.toLowerCase();
+      const authUser = mapApiUserToAuthUser(resData.user);
 
-      if (!isPasswordMatch) {
-        return { success: false, error: 'Incorrect password. Please try again.' };
-      }
-
-      const userProfilePayload = {
-        id: user.id,
-        email: user.email,
-        fullName: user.name,
-        role: user.role,
-        avatar: user.avatar,
-        institution: user.profile.institution,
-        department: user.profile.department,
-        course: user.profile.course,
-        batch: user.profile.batch,
-        rollNumber: user.profile.rollNumber,
-        designation: user.profile.designation,
-        facultyId: user.profile.employeeId,
-        skills: user.profile.skills || [],
-        bio: user.profile.bio || '',
-        githubHandle: user.profile.githubHandle,
-        verifiedStatus: 'Verified',
-        verificationSignals: {
-          emailVerified: true,
-          institutionalDomain: true,
-          idProofVerified: true,
-          nodeApproval: true
-        },
-        projectsCount: user.profile.projectsCount || 0,
-        commitsCount: user.profile.commitsCount || 0,
-        rubricScore: user.profile.rubricScore || 9.0
+      // Create session with complete profile fields
+      const sessionUser = {
+        id: authUser.id,
+        role: authUser.role,
+        fullName: authUser.name,
+        email: authUser.email,
+        avatar: authUser.avatar,
+        ...authUser.profile
       };
 
-      // Create session
       const session = sessionService.setSession(
-        user.id,
-        user.role,
-        undefined,
-        userProfilePayload
+        authUser.id,
+        authUser.role,
+        resData.token,
+        sessionUser
       );
+
+      try {
+        localStorage.setItem('pv_auth_token', resData.token);
+      } catch {
+        // ignore
+      }
 
       return {
         success: true,
-        user,
-        role: user.role,
+        user: authUser,
+        role: authUser.role,
         token: session.token,
-        message: `Welcome back, ${user.name}!`
+        message: `Welcome back, ${authUser.name}!`
       };
     } catch (err: any) {
       return {
@@ -268,11 +266,16 @@ export class FrontendAuthService implements AuthServiceContract {
   }
 
   async logout(): Promise<void> {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch {
+      // ignore
+    }
     sessionService.clearSession();
     try {
-      // Clear legacy storage keys if any
       localStorage.removeItem('pv_auth_session');
       localStorage.removeItem('pv_active_session_role');
+      localStorage.removeItem('pv_auth_token');
     } catch {
       // ignore
     }
@@ -280,15 +283,42 @@ export class FrontendAuthService implements AuthServiceContract {
 
   async getCurrentUser(): Promise<AuthUser | null> {
     const session = sessionService.getSession();
-    if (!session) return null;
+    if (!session || !session.token) return null;
 
-    const user = userService.getById(session.userId);
-    if (!user) {
-      sessionService.clearSession();
+    try {
+      const res = await fetch('/api/auth/me', {
+        headers: {
+          Authorization: `Bearer ${session.token}`
+        }
+      });
+
+      if (!res.ok) {
+        sessionService.clearSession();
+        return null;
+      }
+
+      const resData = await res.json();
+      if (resData.success && resData.user) {
+        return mapApiUserToAuthUser(resData.user);
+      }
+
+      return null;
+    } catch (err) {
+      console.warn('[authService] Error fetching current user:', err);
+      // Fallback to local session user if offline
+      if (session.user) {
+        return {
+          id: session.userId,
+          name: session.user.fullName || 'User',
+          email: session.user.email || '',
+          role: session.role,
+          avatar: session.user.avatar || '',
+          profile: session.user,
+          createdAt: new Date().toISOString()
+        };
+      }
       return null;
     }
-
-    return user;
   }
 }
 
