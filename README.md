@@ -1,34 +1,93 @@
-<div align="center">
+# ProjectVerse 2.0 — Academic & Open-Source Project Continuity Platform
 
-
-
-### 🧠 𝐒𝐭𝐮𝐝𝐞𝐧𝐭 𝐈𝐧𝐧𝐨𝐯𝐚𝐭𝐢𝐨𝐧 • 𝐒𝐦𝐚𝐫𝐭 𝐄𝐝𝐮𝐜𝐚𝐭𝐢𝐨𝐧 • 𝐂𝐨𝐧𝐭𝐢𝐧𝐮𝐨𝐮𝐬 𝐋𝐞𝐚𝐫𝐧𝐢𝐧𝐠
-
-**𝐈𝐃𝐄𝐀 → 𝐁𝐔𝐈𝐋𝐃 → 𝐕𝐄𝐑𝐈𝐅𝐘 → 𝐂𝐎𝐋𝐋𝐀𝐁𝐎𝐑𝐀𝐓𝐄 → 𝐄𝐕𝐎𝐋𝐕𝐄**
-
-<br/>
-
-
+ProjectVerse 2.0 is a full-stack web application built with **React**, **TypeScript**, **Vite**, **Tailwind CSS**, **Node.js**, **Express**, and **MongoDB Atlas (Mongoose)**.
 
 ---
 
-## 🚧 𝐏𝐑𝐎𝐉𝐄𝐂𝐓 𝐒𝐓𝐀𝐓𝐔𝐒
+## Requirements
 
-
-> The platform aims to make student projects **𝐃𝐢𝐬𝐜𝐨𝐯𝐞𝐫𝐚𝐛𝐥𝐞 • 𝐕𝐞𝐫𝐢𝐟𝐢𝐚𝐛𝐥𝐞 • 𝐂𝐨𝐥𝐥𝐚𝐛𝐨𝐫𝐚𝐭𝐢𝐯𝐞 • 𝐑𝐞𝐮𝐬𝐚𝐛𝐥𝐞**.
-
----
-
-## 🚀 𝐖𝐇𝐀𝐓 𝐈𝐒 𝐏𝐑𝐎𝐉𝐄𝐂𝐓𝐕𝐄𝐑𝐒𝐄?
-
-**𝐏𝐫𝐨𝐣𝐞𝐜𝐭𝐕𝐞𝐫𝐬𝐞** is a **𝐒𝐦𝐚𝐫𝐭 𝐄𝐝𝐮𝐜𝐚𝐭𝐢𝐨𝐧 𝐄𝐜𝐨𝐬𝐲𝐬𝐭𝐞𝐦** that transforms student projects from one-time submissions into **𝐥𝐨𝐧𝐠-𝐭𝐞𝐫𝐦 𝐥𝐞𝐚𝐫𝐧𝐢𝐧𝐠 𝐚𝐬𝐬𝐞𝐭𝐬**.
-
-Students can **𝐁𝐮𝐢𝐥𝐝 → 𝐃𝐢𝐬𝐜𝐨𝐯𝐞𝐫 → 𝐕𝐞𝐫𝐢𝐟𝐲 → 𝐂𝐨𝐥𝐥𝐚𝐛𝐨𝐫𝐚𝐭𝐞 → 𝐂𝐨𝐧𝐭𝐢𝐧𝐮𝐞 → 𝐄𝐯𝐨𝐥𝐯𝐞**.
+- **Node.js**: v18.0.0 or higher
+- **npm**: v9.0.0 or higher
+- **MongoDB**: MongoDB Atlas cluster (or local MongoDB instance)
 
 ---
 
+## Setup
 
+1. **Install dependencies**:
+   ```bash
+   npm install
+   ```
 
-## 💡 𝐕𝐈𝐒𝐈𝐎𝐍
+2. **Configure environment variables**:
+   Copy `.env.example` to `.env`:
+   ```bash
+   cp .env.example .env
+   ```
 
-> **𝐓𝐮𝐫𝐧 𝐬𝐭𝐮𝐝𝐞𝐧𝐭 𝐩𝐫𝐨𝐣𝐞𝐜𝐭𝐬 𝐟𝐫𝐨𝐦 𝐨𝐧𝐞-𝐭𝐢𝐦𝐞 𝐬𝐮𝐛𝐦𝐢𝐬𝐬𝐢𝐨𝐧𝐬 𝐢𝐧𝐭𝐨 𝐚 𝐜𝐨𝐧𝐧𝐞𝐜𝐭𝐞𝐝 𝐞𝐜𝐨𝐬𝐲𝐬𝐭𝐞𝐦 𝐨𝐟 𝐤𝐧𝐨𝐰𝐥𝐞𝐝𝐠𝐞, 𝐢𝐧𝐧𝐨𝐯𝐚𝐭𝐢𝐨𝐧 & 𝐜𝐨𝐧𝐭𝐢𝐧𝐮𝐨𝐮𝐬 𝐥𝐞𝐚𝐫𝐧𝐢𝐧𝐠.**
+---
+
+## Environment (`.env`)
+
+Configure the following variables inside your `.env` file:
+
+```env
+MONGODB_URI=mongodb+srv://USERNAME:PASSWORD@CLUSTER.mongodb.net/projectverse?retryWrites=true&w=majority
+JWT_SECRET=CHANGE_THIS_TO_A_LONG_RANDOM_SECRET
+PORT=3000
+CLIENT_URL=http://localhost:3000
+NODE_ENV=development
+```
+
+Optional variables for seeding an initial administrator account via `npm run seed:admin`:
+```env
+ADMIN_EMAIL=admin@projectverse.edu
+ADMIN_PASSWORD=YourStrongAdminPassword
+```
+
+---
+
+## MongoDB Atlas Setup
+
+1. Log in to [MongoDB Atlas](https://cloud.mongodb.com/) and create a cluster (free **M0 Sandbox** works).
+2. Under **Security → Database Access**, create a database user with **Read and write to any database** permissions.
+3. Under **Security → Network Access**, add your IP address (or `0.0.0.0/0` for development).
+4. Click **Connect → Drivers** on your cluster and copy the connection string:
+   ```
+   mongodb+srv://<username>:<password>@<cluster>.mongodb.net/projectverse?retryWrites=true&w=majority
+   ```
+5. Paste the connection string as `MONGODB_URI` in `.env`. MongoDB automatically creates the `projectverse` database and all collections (`users`, `projects`, `projectMembers`, `projectLineages`, `projectReviews`, `verifications`, `institutions`, `collaborationRequests`, `notifications`) on first write.
+
+---
+
+## Run, Build & Production Commands
+
+### Development
+Starts the Express backend and Vite frontend middleware on `http://localhost:3000`:
+```bash
+npm run dev
+```
+
+### Seed Administrator Account
+Seeds an `ADMIN` user using `ADMIN_EMAIL` and `ADMIN_PASSWORD` from `.env`:
+```bash
+npm run seed:admin
+```
+
+### Build
+Compiles the frontend and bundles the Node/Express server into `dist/`:
+```bash
+npm run build
+```
+
+### Production
+Starts the compiled production server:
+```bash
+npm start
+```
+
+---
+
+## API Reference
+
+See [API.md](./API.md) for full documentation of all REST API endpoints.
