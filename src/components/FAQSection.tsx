@@ -2,51 +2,60 @@ import React, { useState } from 'react';
 import { Plus, Minus } from 'lucide-react';
 
 interface FAQItem {
+  id: string;
   question: string;
   answer: string;
 }
 
 const FAQ_ITEMS: FAQItem[] = [
   {
+    id: 'what-is-project-era',
     question: 'What is Project Era?',
     answer:
-      'Project Era is an academic project workspace for college communities that brings project planning, team coordination, task deadlines, documentation records, and faculty feedback into one organized platform.',
+      'Project Era is a platform for organizing, discovering, sharing, and continuing academic projects within a college community.'
   },
   {
+    id: 'who-can-use-project-era',
     question: 'Who can use Project Era?',
     answer:
-      'Project Era is designed for four academic roles: Students, Faculty supervisors, Heads of Department (HODs), and Alumni mentors.',
+      "The platform supports Student, Faculty, HOD, and Alumni roles, with access determined by the application's permissions."
   },
   {
-    question: 'How do students manage their projects?',
+    id: 'upload-without-review',
+    question: 'Can I upload a project without faculty review?',
     answer:
-      'Students can create projects, define domains and technologies, add teammates with clear responsibilities, break milestones into tasks with due dates, and attach documentation records for review.',
+      'Yes. Project upload and publishing must not require faculty review. Review is optional and must not block a project from being submitted or published.'
   },
   {
-    question: 'How can faculty review student projects?',
+    id: 'explore-other-projects',
+    question: 'Can I explore projects created by other users?',
     answer:
-      'Faculty members can view assigned student projects, inspect submitted documentation and milestone progress, post structured feedback, and update review statuses such as Approved or Revisions Requested.',
+      'Yes, users can explore projects made available through the platform, subject to existing access and privacy rules.'
   },
   {
-    question: 'What can HODs monitor?',
+    id: 'collaborate-existing-project',
+    question: 'Can I collaborate on an existing project?',
     answer:
-      'HODs can view department-wide project summaries across every lifecycle stage, filter projects by department and status, identify delayed milestones or overdue tasks, and monitor pending academic reviews.',
+      'Collaboration is available where supported by project membership and permission controls.'
   },
   {
-    question: 'Can alumni support student teams?',
+    id: 'what-happens-when-graduates',
+    question: 'What happens when a student graduates?',
     answer:
-      'Yes. Alumni can share their industry skills, offer technical mentoring sessions on active projects, and respond to student collaboration and guidance requests without receiving faculty grading privileges.',
+      'Project documentation and handover information can help future contributors continue a project, provided the relevant records remain available and authorized access is maintained.'
   },
   {
-    question: 'Is Project Era free to use?',
+    id: 'replace-github',
+    question: 'Does Project Era replace GitHub?',
     answer:
-      'This frontend preview of Project Era is freely accessible in your browser to explore role-specific dashboards and academic project workflows.',
+      'No. GitHub can continue to host source code. Project Era focuses on project discovery, academic context, collaboration, and project continuity.'
   },
   {
-    question: 'How do I create an account?',
+    id: 'how-to-get-started',
+    question: 'How do I get started?',
     answer:
-      'Click "Get Started" in the navigation bar, select your role (Student, Faculty, HOD, or Alumni), and complete the role-specific registration form.',
-  },
+      'Register or sign in, complete your profile, and begin exploring or publishing projects.'
+  }
 ];
 
 export const FAQSection: React.FC = () => {
@@ -59,51 +68,69 @@ export const FAQSection: React.FC = () => {
   return (
     <section
       id="faq"
-      className="py-14 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-white"
+      className="py-14 sm:py-18 lg:py-22 px-4 sm:px-6 lg:px-8 bg-white"
     >
       <div className="mx-auto max-w-3xl">
-        <div className="text-center max-w-xl mx-auto mb-10">
+        <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-12">
+          <div className="text-xs font-semibold tracking-widest uppercase text-neutral-500 mb-2.5">
+            Answers & Clarity
+          </div>
           <h2
             style={{ textWrap: 'balance' }}
-            className="font-display text-2xl sm:text-3xl lg:text-4xl font-normal text-neutral-900 tracking-tight"
+            className="font-display text-2xl sm:text-3xl md:text-4xl font-normal text-neutral-900 tracking-tight leading-[1.15]"
           >
             Frequently Asked Questions
           </h2>
-          <p className="mt-2.5 text-sm sm:text-base text-neutral-600">
-            Clear answers about roles, project workflows, and academic reviews on Project Era.
+          <p className="mt-3 text-sm sm:text-base text-neutral-600 leading-relaxed">
+            Everything you need to know about Project Era, project publishing, collaboration, and academic project continuity.
           </p>
         </div>
 
-        <div className="space-y-2.5">
+        <div className="space-y-3">
           {FAQ_ITEMS.map((item, idx) => {
             const isOpen = openIndex === idx;
+            const panelId = `faq-panel-${item.id}`;
+            const buttonId = `faq-btn-${item.id}`;
+
             return (
               <div
-                key={item.question}
+                key={item.id}
                 className="rounded-xl border border-neutral-200 bg-white transition-colors hover:border-neutral-300"
               >
                 <button
+                  id={buttonId}
                   type="button"
                   onClick={() => toggleFAQ(idx)}
                   aria-expanded={isOpen}
+                  aria-controls={panelId}
                   className="flex w-full items-center justify-between gap-4 p-4 sm:p-5 text-left cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900 rounded-xl"
                 >
                   <span className="font-display text-sm sm:text-base font-medium text-neutral-900">
                     {item.question}
                   </span>
                   <span
+                    aria-hidden="true"
                     className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border transition-colors ${
                       isOpen
                         ? 'border-neutral-900 bg-neutral-900 text-white'
                         : 'border-neutral-200 bg-neutral-50 text-neutral-700'
                     }`}
                   >
-                    {isOpen ? <Minus className="h-3.5 w-3.5" /> : <Plus className="h-3.5 w-3.5" />}
+                    {isOpen ? (
+                      <Minus className="h-3.5 w-3.5" />
+                    ) : (
+                      <Plus className="h-3.5 w-3.5" />
+                    )}
                   </span>
                 </button>
 
                 {isOpen && (
-                  <div className="border-t border-neutral-100 px-4 sm:px-5 pb-4 sm:pb-5 pt-3 text-xs sm:text-sm leading-relaxed text-neutral-600">
+                  <div
+                    id={panelId}
+                    role="region"
+                    aria-labelledby={buttonId}
+                    className="border-t border-neutral-100 px-4 sm:px-5 pb-4 sm:pb-5 pt-3.5 text-xs sm:text-sm leading-relaxed text-neutral-600"
+                  >
                     {item.answer}
                   </div>
                 )}

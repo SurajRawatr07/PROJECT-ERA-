@@ -19,8 +19,10 @@ import {
 } from './rbac';
 import { documentUpload, documentStorageService } from './services/documentStorage';
 import { UserRole, ProjectType, VerificationStatus } from '../src/types';
+import { eraRouter } from './eraRoutes';
 
 export const apiRouter = Router();
+apiRouter.use('/era', eraRouter);
 
 // In-memory OTP store for email and mobile verifications
 interface OtpEntry {

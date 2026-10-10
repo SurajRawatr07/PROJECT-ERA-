@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
+import { X, Info } from 'lucide-react';
 import { EraProject, EraProjectStatus } from '../../types/projectEra';
 import { DEPARTMENTS_LIST, PROJECT_STATUS_FLOW } from '../../data/projectEraData';
 
@@ -29,8 +29,8 @@ export const ProjectEraFormModal: React.FC<ProjectEraFormModalProps> = ({
   const [status, setStatus] = useState<EraProjectStatus>('Planning');
   const [academicSession, setAcademicSession] = useState('2025–2026 (Even Semester)');
   const [department, setDepartment] = useState(defaultDepartment || DEPARTMENTS_LIST[0]);
-  const [supervisorName, setSupervisorName] = useState('Dr. Meera Krishnan');
-  const [supervisorEmail, setSupervisorEmail] = useState('meera.krishnan@college.edu');
+  const [supervisorName, setSupervisorName] = useState('');
+  const [supervisorEmail, setSupervisorEmail] = useState('');
 
   useEffect(() => {
     if (initialProject) {
@@ -41,8 +41,16 @@ export const ProjectEraFormModal: React.FC<ProjectEraFormModalProps> = ({
       setStatus(initialProject.status);
       setAcademicSession(initialProject.academicSession);
       setDepartment(initialProject.department);
-      setSupervisorName(initialProject.supervisorName);
-      setSupervisorEmail(initialProject.supervisorEmail);
+      setSupervisorName(
+        initialProject.supervisorName === 'Not Assigned (Optional)'
+          ? ''
+          : initialProject.supervisorName
+      );
+      setSupervisorEmail(
+        initialProject.supervisorEmail === 'optional@college.edu'
+          ? ''
+          : initialProject.supervisorEmail
+      );
     } else {
       setTitle('');
       setDescription('');
@@ -51,8 +59,8 @@ export const ProjectEraFormModal: React.FC<ProjectEraFormModalProps> = ({
       setStatus('Planning');
       setAcademicSession('2025–2026 (Even Semester)');
       setDepartment(defaultDepartment || DEPARTMENTS_LIST[0]);
-      setSupervisorName('Dr. Meera Krishnan');
-      setSupervisorEmail('meera.krishnan@college.edu');
+      setSupervisorName('');
+      setSupervisorEmail('');
     }
   }, [initialProject, defaultDepartment, isOpen]);
 
@@ -68,6 +76,8 @@ export const ProjectEraFormModal: React.FC<ProjectEraFormModalProps> = ({
       .filter(Boolean);
 
     const today = new Date().toISOString().split('T')[0];
+    const cleanSupervisorName = supervisorName.trim() || 'Not Assigned (Optional)';
+    const cleanSupervisorEmail = supervisorEmail.trim() || 'optional@college.edu';
 
     if (initialProject) {
       onSave({
@@ -79,8 +89,8 @@ export const ProjectEraFormModal: React.FC<ProjectEraFormModalProps> = ({
         status,
         academicSession: academicSession.trim(),
         department,
-        supervisorName: supervisorName.trim(),
-        supervisorEmail: supervisorEmail.trim(),
+        supervisorName: cleanSupervisorName,
+        supervisorEmail: cleanSupervisorEmail,
         updatedAt: today
       });
     } else {
@@ -94,8 +104,8 @@ export const ProjectEraFormModal: React.FC<ProjectEraFormModalProps> = ({
         academicSession: academicSession.trim(),
         institution: defaultInstitution || 'National Institute of Engineering & Technology',
         department,
-        supervisorName: supervisorName.trim(),
-        supervisorEmail: supervisorEmail.trim(),
+        supervisorName: cleanSupervisorName,
+        supervisorEmail: cleanSupervisorEmail,
         leadStudentName: defaultLeadName,
         updatedAt: today,
         teamMembers: [
@@ -142,10 +152,10 @@ export const ProjectEraFormModal: React.FC<ProjectEraFormModalProps> = ({
         <div className="flex items-center justify-between pb-4 border-b border-neutral-200">
           <div>
             <div className="text-xs font-mono text-neutral-500">
-              Project Era · Demonstration Workspace
+              Project Era · Immediate Publishing (Review Optional)
             </div>
             <h2 className="font-display text-xl font-semibold text-neutral-900">
-              {initialProject ? 'Edit Academic Project' : 'Create New Academic Project'}
+              {initialProject ? 'Edit Academic Project' : 'Create & Publish Academic Project'}
             </h2>
           </div>
           <button
@@ -158,7 +168,15 @@ export const ProjectEraFormModal: React.FC<ProjectEraFormModalProps> = ({
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-5 space-y-4">
+        {/* Explicit Optional Review Rule Notice */}
+        <div className="mt-4 p-3.5 rounded-xl bg-[#faf9f6] border border-neutral-200 flex items-start gap-2.5 text-xs text-neutral-600">
+          <Info className="w-4 h-4 text-neutral-900 shrink-0 mt-0.5" />
+          <span>
+            <strong className="text-neutral-900">No Mandatory Review Required:</strong> Your project is saved and published immediately. Faculty supervision and review are optional and never block project creation or submission.
+          </span>
+        </div>
+
+        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
           <div>
             <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
               Project Title *
@@ -175,14 +193,14 @@ export const ProjectEraFormModal: React.FC<ProjectEraFormModalProps> = ({
 
           <div>
             <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
-              Project Description & Problem Statement *
+              Project Description & Goals *
             </label>
             <textarea
               required
               rows={3}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Describe the academic problem, objectives, and expected outcomes..."
+              placeholder="Describe the project goals, technical implementation, and intended outcomes..."
               className="w-full rounded-xl border border-neutral-300 px-3.5 py-2.5 text-sm text-neutral-900 focus:border-neutral-900 focus:outline-none"
             />
           </div>
@@ -220,7 +238,7 @@ export const ProjectEraFormModal: React.FC<ProjectEraFormModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
-                Project Status
+                Current Stage
               </label>
               <select
                 value={status}
@@ -270,28 +288,26 @@ export const ProjectEraFormModal: React.FC<ProjectEraFormModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-neutral-100">
             <div>
               <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
-                Faculty Supervisor Name *
+                Faculty Supervisor Name (Optional)
               </label>
               <input
                 type="text"
-                required
                 value={supervisorName}
                 onChange={(e) => setSupervisorName(e.target.value)}
-                placeholder="Dr. Meera Krishnan"
+                placeholder="Leave blank if publishing independently"
                 className="w-full rounded-xl border border-neutral-300 px-3.5 py-2.5 text-sm text-neutral-900 focus:border-neutral-900 focus:outline-none"
               />
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
-                Supervisor Email *
+                Supervisor Email (Optional)
               </label>
               <input
                 type="email"
-                required
                 value={supervisorEmail}
                 onChange={(e) => setSupervisorEmail(e.target.value)}
-                placeholder="supervisor@college.edu"
+                placeholder="Optional supervisor email"
                 className="w-full rounded-xl border border-neutral-300 px-3.5 py-2.5 text-sm text-neutral-900 focus:border-neutral-900 focus:outline-none"
               />
             </div>
@@ -309,7 +325,7 @@ export const ProjectEraFormModal: React.FC<ProjectEraFormModalProps> = ({
               type="submit"
               className="px-6 py-2.5 rounded-xl bg-neutral-900 text-white text-xs sm:text-sm font-semibold hover:bg-neutral-800 cursor-pointer"
             >
-              {initialProject ? 'Save Project Changes' : 'Create Project'}
+              {initialProject ? 'Save Project Changes' : 'Publish Project Now'}
             </button>
           </div>
         </form>

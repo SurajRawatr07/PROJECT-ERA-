@@ -1,268 +1,525 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   GraduationCap,
   BookOpen,
   Landmark,
   Award,
-  ArrowRight
+  CheckCircle2,
+  ChevronDown,
+  ArrowRight,
+  FolderPlus,
+  Layers,
+  Users,
+  FileCheck2,
+  MessageSquare,
+  FolderSync,
+  GitFork,
+  TrendingUp,
+  Info,
+  X
 } from 'lucide-react';
-import { EraAccountType, EraProjectStatus } from '../../types/projectEra';
+import { EraAccountType } from '../../types/projectEra';
 import { FAQSection } from '../FAQSection';
 
 interface HomeSectionsProps {
+  selectedRoleFromNav?: EraAccountType | null;
+  isAuthenticated?: boolean;
   onGetStarted: (role?: EraAccountType) => void;
-  onExploreStage?: (stage: EraProjectStatus) => void;
+  onExploreProjects: () => void;
 }
 
-const FIVE_WORKFLOW_STEPS = [
-  { num: '01', label: 'Create Project' },
-  { num: '02', label: 'Organize Team' },
-  { num: '03', label: 'Build & Document' },
-  { num: '04', label: 'Get Feedback' },
-  { num: '05', label: 'Complete Project' }
-];
-
-const FOUR_ROLES: Array<{
-  role: EraAccountType;
-  title: string;
-  description: string;
+interface RoleCardData {
+  id: EraAccountType;
+  name: string;
+  subtitle: string;
   icon: React.ComponentType<{ className?: string }>;
-}> = [
+  summary: string;
+  capabilities: string[];
+  scopeNote: string;
+}
+
+const FOUR_ROLES: RoleCardData[] = [
   {
-    role: 'STUDENT',
-    title: 'Student — Build & Deliver',
-    description: 'Manage projects, tasks, teammates, and deadlines.',
-    icon: GraduationCap
+    id: 'STUDENT',
+    name: 'Student',
+    subtitle: 'Build, Publish & Collaborate',
+    icon: GraduationCap,
+    summary:
+      'Create academic projects, coordinate with teammates, record technical progress, and publish work without waiting for mandatory approval.',
+    capabilities: [
+      'Create and publish academic projects.',
+      'Discover projects and explore technologies.',
+      'Collaborate with teammates.',
+      'Maintain a project portfolio and share progress.'
+    ],
+    scopeNote:
+      'Students can upload and publish projects directly. Faculty review is optional and never blocks project creation or publishing.'
   },
   {
-    role: 'FACULTY',
-    title: 'Faculty — Guide & Review',
-    description: 'Review assigned projects and provide actionable feedback.',
-    icon: BookOpen
+    id: 'FACULTY',
+    name: 'Faculty',
+    subtitle: 'Guide, Mentor & Review',
+    icon: BookOpen,
+    summary:
+      'Explore student projects across departments, offer academic guidance, and provide structured feedback when review is requested or supported.',
+    capabilities: [
+      'Discover student projects.',
+      'Provide guidance and feedback where supported.',
+      'Participate in academic collaboration.'
+    ],
+    scopeNote:
+      'Faculty accounts support academic mentoring and optional project feedback. Selecting Faculty does not automatically grant administrative access.'
   },
   {
-    role: 'HOD',
-    title: 'HOD — Monitor & Oversee',
-    description: 'Track department projects and pending academic reviews.',
-    icon: Landmark
+    id: 'HOD',
+    name: 'HOD',
+    subtitle: 'Department Academic Overview',
+    icon: Landmark,
+    summary:
+      'View authorized department-level project records, monitor academic participation across cohorts, and support departmental initiatives.',
+    capabilities: [
+      'Access authorized department-level project information.',
+      'Explore project participation and progress where available.',
+      'Support departmental academic initiatives.'
+    ],
+    scopeNote:
+      'HOD accounts provide department-scoped academic visibility where supported and do not automatically receive platform-wide administrative access.'
   },
   {
-    role: 'ALUMNI',
-    title: 'Alumni — Mentor & Contribute',
-    description: 'Share experience and support student projects.',
-    icon: Award
+    id: 'ALUMNI',
+    name: 'Alumni',
+    subtitle: 'Mentor & Support Continuity',
+    icon: Award,
+    summary:
+      'Stay connected with your college community, discover student work, share industry experience, and help continuing projects evolve.',
+    capabilities: [
+      'Discover projects and student work.',
+      'Share knowledge and mentor where supported.',
+      'Contribute to continuing project development.'
+    ],
+    scopeNote:
+      'Alumni accounts focus on mentorship and project continuity within authorized project permissions.'
   }
 ];
 
-const LIFECYCLE_STAGES: Record<
-  EraProjectStatus,
-  { summary: string; sample: string; deliverable: string }
-> = {
-  Idea: {
-    summary: 'Define the problem statement, domain, and faculty supervisor.',
-    sample: 'Campus Shuttle Live ETA & Route Optimizer',
-    deliverable: 'Initial Topic Proposal'
+interface LifecycleStep {
+  num: string;
+  name: string;
+  description: string;
+  isOptional?: boolean;
+  icon: React.ComponentType<{ className?: string }>;
+}
+
+const LIFECYCLE_STEPS: LifecycleStep[] = [
+  {
+    num: '01',
+    name: 'Create',
+    description: 'Introduce a project and its goals.',
+    icon: FolderPlus
   },
-  Planning: {
-    summary: 'Structure team roles, system architecture, and semester milestones.',
-    sample: 'Braille & Audio Textbook Companion',
-    deliverable: 'Project Synopsis & Schedule'
+  {
+    num: '02',
+    name: 'Build',
+    description: 'Develop the project and its implementation.',
+    icon: Layers
   },
-  Development: {
-    summary: 'Execute assigned tasks, log progress, and attach technical documentation.',
-    sample: 'Smart Campus Energy & Occupancy Monitor',
-    deliverable: 'Working Prototype & Test Logs'
+  {
+    num: '03',
+    name: 'Collaborate',
+    description: 'Work with teammates and contributors.',
+    icon: Users
   },
-  Review: {
-    summary: 'Submit milestone reports for faculty evaluation and revision feedback.',
-    sample: 'Automated Lab Attendance & Timetable Resolver',
-    deliverable: 'Faculty Rubric Evaluation'
+  {
+    num: '04',
+    name: 'Prove',
+    description: 'Record project details, contributions, and supporting evidence.',
+    icon: FileCheck2
   },
-  Completed: {
-    summary: 'Finalize approved reports and complete the academic submission.',
-    sample: 'Solar Micro-Inverter Telemetry Logger',
-    deliverable: 'Approved Final Capstone Report'
+  {
+    num: '05',
+    name: 'Review',
+    description: 'Receive feedback when a review is requested or available.',
+    isOptional: true,
+    icon: MessageSquare
+  },
+  {
+    num: '06',
+    name: 'Handover',
+    description: 'Document knowledge and prepare the project for others.',
+    icon: FolderSync
+  },
+  {
+    num: '07',
+    name: 'Continue',
+    description: 'Let future contributors build on previous work.',
+    icon: GitFork
+  },
+  {
+    num: '08',
+    name: 'Evolve',
+    description: 'Improve and extend the project over time.',
+    icon: TrendingUp
   }
-};
+];
 
 export const ProjectEraSections: React.FC<HomeSectionsProps> = ({
+  selectedRoleFromNav,
+  isAuthenticated = false,
   onGetStarted,
-  onExploreStage
+  onExploreProjects
 }) => {
-  const [selectedStage, setSelectedStage] = useState<EraProjectStatus>('Development');
-  const stageDetail = LIFECYCLE_STAGES[selectedStage];
+  const [activeRole, setActiveRole] = useState<EraAccountType | null>('STUDENT');
+  const [selectedLifecycleStep, setSelectedLifecycleStep] = useState<string>('01');
+
+  useEffect(() => {
+    if (selectedRoleFromNav) {
+      setActiveRole(selectedRoleFromNav);
+    }
+  }, [selectedRoleFromNav]);
+
+  const activeRoleData = FOUR_ROLES.find((r) => r.id === activeRole) || null;
+  const activeStepData =
+    LIFECYCLE_STEPS.find((s) => s.num === selectedLifecycleStep) || LIFECYCLE_STEPS[0];
+
+  const handleToggleRole = (roleId: EraAccountType) => {
+    setActiveRole((prev) => (prev === roleId ? null : roleId));
+  };
 
   return (
     <>
-      {/* 1. HOW IT WORKS (5-Step Horizontal / Responsive Workflow) */}
+      {/* =================================================================== */}
+      {/* SECTION 4: OPEN ACADEMIC ECOSYSTEM — WHO CAN USE PROJECT ERA?       */}
+      {/* =================================================================== */}
       <section
-        id="how-it-works"
-        className="w-full py-14 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-white border-b border-neutral-200/80"
+        id="who-can-use"
+        className="w-full py-14 sm:py-18 lg:py-22 px-4 sm:px-6 lg:px-8 bg-white border-b border-neutral-200/80"
       >
-        <div className="mx-auto max-w-7xl">
-          <div className="max-w-xl mb-10">
+        <div className="mx-auto max-w-6xl">
+          {/* Section Heading & Supporting Copy */}
+          <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-12">
+            <div className="text-xs font-semibold tracking-widest uppercase text-neutral-500 mb-2.5">
+              Open Academic Ecosystem
+            </div>
             <h2
               style={{ textWrap: 'balance' }}
-              className="font-display text-2xl sm:text-3xl lg:text-4xl font-normal text-neutral-900 tracking-tight"
+              className="font-display text-2xl sm:text-3xl md:text-4xl font-normal text-neutral-900 tracking-tight leading-[1.15]"
             >
-              From Idea to Completion.
+              Who Can Use{' '}
+              <span className="relative inline-block">
+                <em className="text-[#b45309] not-italic font-normal">Project Era?</em>
+                <span className="absolute bottom-1 left-0 right-0 h-[2.5px] rounded bg-amber-200/90" />
+              </span>
             </h2>
-            <p className="mt-2.5 text-sm sm:text-base text-neutral-600">
-              A clear five-step progression from project creation to final submission.
+            <p className="mt-3 text-sm sm:text-base text-neutral-600 leading-relaxed font-body">
+              One platform for students, faculty, alumni, and academic communities to build, contribute, mentor, and support projects.
+            </p>
+            <p className="mt-2 text-xs font-medium text-neutral-500">
+              Select a role below to explore its capabilities and scope.
             </p>
           </div>
 
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4">
-            {FIVE_WORKFLOW_STEPS.map((step, idx) => (
-              <React.Fragment key={step.num}>
-                <div className="flex-1 p-4 sm:p-5 rounded-2xl border border-neutral-200 bg-white flex items-center gap-3.5">
-                  <span className="text-xs font-mono font-bold text-neutral-400 tabular-nums shrink-0">
-                    {step.num}
-                  </span>
-                  <span className="font-display text-sm sm:text-base font-semibold text-neutral-900 whitespace-nowrap">
-                    {step.label}
-                  </span>
+          {/* Four Interactive Role Cards */}
+          <div
+            role="tablist"
+            aria-label="Who can use Project Era roles"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4"
+          >
+            {FOUR_ROLES.map((role) => {
+              const Icon = role.icon;
+              const isSelected = activeRole === role.id;
+
+              return (
+                <button
+                  key={role.id}
+                  id={`era-role-tab-${role.id.toLowerCase()}`}
+                  type="button"
+                  role="tab"
+                  aria-selected={isSelected}
+                  aria-expanded={isSelected}
+                  aria-controls={`era-role-panel-${role.id.toLowerCase()}`}
+                  onClick={() => handleToggleRole(role.id)}
+                  className={`group flex flex-col justify-between p-4 sm:p-5 rounded-2xl text-left transition-colors duration-150 cursor-pointer border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900 ${
+                    isSelected
+                      ? 'bg-neutral-900 text-white border-neutral-900'
+                      : 'bg-white text-neutral-900 border-neutral-200 hover:border-neutral-400 hover:bg-neutral-50/70'
+                  }`}
+                >
+                  <div className="flex items-center justify-between w-full mb-3.5">
+                    <div
+                      className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                        isSelected
+                          ? 'bg-white/15 text-white'
+                          : 'bg-neutral-100 text-neutral-900 group-hover:bg-neutral-200'
+                      }`}
+                    >
+                      <Icon className="w-5 h-5" />
+                    </div>
+
+                    <ChevronDown
+                      className={`h-4 w-4 shrink-0 transition-transform duration-150 ${
+                        isSelected
+                          ? 'rotate-180 text-white'
+                          : 'text-neutral-400 group-hover:text-neutral-900'
+                      }`}
+                    />
+                  </div>
+
+                  <div>
+                    <div
+                      className={`font-display text-base sm:text-lg font-semibold leading-snug ${
+                        isSelected ? 'text-white' : 'text-neutral-900'
+                      }`}
+                    >
+                      {role.name}
+                    </div>
+                    <div
+                      className={`text-xs mt-1 ${
+                        isSelected ? 'text-neutral-300' : 'text-neutral-500'
+                      }`}
+                    >
+                      {role.subtitle}
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Expandable Role Capabilities Panel */}
+          {activeRoleData && (
+            <div
+              id={`era-role-panel-${activeRoleData.id.toLowerCase()}`}
+              role="tabpanel"
+              aria-labelledby={`era-role-tab-${activeRoleData.id.toLowerCase()}`}
+              className="mt-5 p-5 sm:p-7 rounded-2xl bg-[#faf9f6] border border-neutral-300/90 transition-opacity duration-150"
+            >
+              <div className="flex items-start justify-between gap-4 pb-4 border-b border-neutral-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-neutral-900 text-white flex items-center justify-center shrink-0">
+                    {React.createElement(activeRoleData.icon, { className: 'w-5 h-5' })}
+                  </div>
+                  <div>
+                    <h3 className="font-display text-xl sm:text-2xl font-normal text-neutral-900">
+                      {activeRoleData.name}
+                    </h3>
+                    <div className="text-xs text-neutral-500">{activeRoleData.subtitle}</div>
+                  </div>
                 </div>
 
-                {idx < FIVE_WORKFLOW_STEPS.length - 1 && (
-                  <div
-                    aria-hidden="true"
-                    className="flex items-center justify-center text-neutral-300 font-mono text-sm select-none py-0.5 lg:py-0"
-                  >
-                    <span className="hidden lg:inline">→</span>
-                    <span className="lg:hidden">↓</span>
+                <button
+                  type="button"
+                  onClick={() => setActiveRole(null)}
+                  aria-label="Close role details"
+                  className="p-1.5 rounded-lg text-neutral-500 hover:text-neutral-900 hover:bg-neutral-200/60 transition-colors cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="mt-5 grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+                {/* Left Column: Summary, Scope Note & Action */}
+                <div className="md:col-span-6 space-y-4">
+                  <p className="text-sm sm:text-base text-neutral-700 leading-relaxed">
+                    {activeRoleData.summary}
+                  </p>
+
+                  <div className="p-3.5 rounded-xl bg-white border border-neutral-200 text-xs text-neutral-600 leading-relaxed">
+                    <strong className="text-neutral-900">Permissions & Scope: </strong>
+                    {activeRoleData.scopeNote}
                   </div>
-                )}
-              </React.Fragment>
-            ))}
-          </div>
+
+                  <div className="pt-1 flex flex-wrap items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => onGetStarted(activeRoleData.id)}
+                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-900 px-5 py-2.5 text-xs sm:text-sm font-semibold text-white hover:bg-neutral-800 transition-colors cursor-pointer"
+                    >
+                      <span>
+                        {isAuthenticated
+                          ? `Open ${activeRoleData.name} Workspace`
+                          : `Get Started as ${activeRoleData.name}`}
+                      </span>
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={onExploreProjects}
+                      className="inline-flex items-center justify-center rounded-xl border border-neutral-300 bg-white px-4 py-2.5 text-xs sm:text-sm font-semibold text-neutral-800 hover:bg-neutral-50 transition-colors cursor-pointer"
+                    >
+                      Explore Projects
+                    </button>
+                  </div>
+                </div>
+
+                {/* Right Column: Exact Role Capabilities List */}
+                <div className="md:col-span-6 md:border-l md:border-neutral-200 md:pl-7">
+                  <div className="text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-3">
+                    {activeRoleData.name} Capabilities
+                  </div>
+                  <ul className="space-y-2.5">
+                    {activeRoleData.capabilities.map((cap) => (
+                      <li
+                        key={cap}
+                        className="flex items-start gap-2.5 text-sm text-neutral-800"
+                      >
+                        <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
+                        <span className="leading-snug font-medium">{cap}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
-      {/* 2. FOUR ACCOUNT TYPES — ROLE BENEFITS */}
+      {/* =================================================================== */}
+      {/* SECTION 5: COMPLETE PROJECT LIFECYCLE                               */}
+      {/* =================================================================== */}
       <section
-        id="roles"
-        className="w-full py-14 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-white border-b border-neutral-200/80"
+        id="how-it-works"
+        className="w-full py-14 sm:py-18 lg:py-22 px-4 sm:px-6 lg:px-8 bg-[#faf9f6] border-b border-neutral-200/80"
       >
-        <div className="mx-auto max-w-7xl">
-          <div className="max-w-xl mb-10">
+        <div className="mx-auto max-w-6xl">
+          {/* Section Header */}
+          <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-12">
+            <div className="text-xs font-semibold tracking-widest uppercase text-neutral-500 mb-2.5">
+              Complete Project Lifecycle
+            </div>
             <h2
               style={{ textWrap: 'balance' }}
-              className="font-display text-2xl sm:text-3xl lg:text-4xl font-normal text-neutral-900 tracking-tight"
+              className="font-display text-2xl sm:text-3xl md:text-4xl font-normal text-neutral-900 tracking-tight leading-[1.15]"
             >
-              Built for Every Role in Your Department.
+              From Genesis to Generational{' '}
+              <span className="relative inline-block">
+                <em className="text-[#b45309] not-italic font-normal">Evolution</em>
+                <span className="absolute bottom-1 left-0 right-0 h-[2.5px] rounded bg-amber-200/90" />
+              </span>
             </h2>
-            <p className="mt-2.5 text-sm sm:text-base text-neutral-600">
-              Dedicated workspaces for Students, Faculty, HODs, and Alumni.
+            <p className="mt-3 text-sm sm:text-base font-medium text-neutral-800">
+              GitHub stores the code. Project Era brings the project journey together.
+            </p>
+            <p className="mt-2 text-xs sm:text-sm font-mono text-neutral-600">
+              Create → Build → Collaborate → Prove → Review → Handover → Continue → Evolve
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-            {FOUR_ROLES.map((item) => {
-              const Icon = item.icon;
+          {/* Connected Horizontal Sequence on Desktop / Responsive Timeline on Mobile */}
+          <div
+            role="list"
+            aria-label="Project Era eight-stage project lifecycle"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4"
+          >
+            {LIFECYCLE_STEPS.map((step, index) => {
+              const Icon = step.icon;
+              const isSelected = selectedLifecycleStep === step.num;
               return (
                 <div
-                  key={item.role}
-                  className="p-5 sm:p-6 rounded-2xl bg-white border border-neutral-200 flex flex-col justify-between"
+                  key={step.num}
+                  role="listitem"
+                  tabIndex={0}
+                  onClick={() => setSelectedLifecycleStep(step.num)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setSelectedLifecycleStep(step.num);
+                    }
+                  }}
+                  className={`relative p-5 rounded-2xl bg-white border transition-colors duration-150 flex flex-col justify-between cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900 ${
+                    isSelected
+                      ? 'border-neutral-900 ring-1 ring-neutral-900'
+                      : 'border-neutral-200 hover:border-neutral-400'
+                  }`}
                 >
                   <div>
-                    <div className="w-9 h-9 rounded-xl bg-neutral-100 flex items-center justify-center text-neutral-900 mb-4">
-                      <Icon className="w-4 h-4" />
+                    <div className="flex items-center justify-between gap-2 mb-3.5">
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-xs font-bold tabular-nums text-neutral-400">
+                          {step.num}
+                        </span>
+                        {step.isOptional && (
+                          <span className="text-[11px] font-medium text-[#b45309]">
+                            · Optional
+                          </span>
+                        )}
+                      </div>
+                      <div
+                        className={`w-9 h-9 rounded-xl flex items-center justify-center transition-colors ${
+                          isSelected
+                            ? 'bg-neutral-900 text-white'
+                            : 'bg-neutral-100 text-neutral-800'
+                        }`}
+                      >
+                        <Icon className="w-4 h-4" />
+                      </div>
                     </div>
-                    <h3 className="font-display text-base font-semibold text-neutral-900">
-                      {item.title}
+
+                    <h3 className="font-display text-base sm:text-lg font-semibold text-neutral-900">
+                      {step.name}
                     </h3>
                     <p className="mt-1.5 text-xs sm:text-sm text-neutral-600 leading-relaxed">
-                      {item.description}
+                      {step.description}
                     </p>
                   </div>
 
-                  <div className="mt-5 pt-3 border-t border-neutral-100">
-                    <button
-                      type="button"
-                      onClick={() => onGetStarted(item.role)}
-                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-neutral-900 hover:text-[#b45309] transition-colors cursor-pointer"
-                    >
-                      <span>Get Started</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </button>
+                  <div className="mt-4 pt-3 border-t border-neutral-100 flex items-center justify-between text-[11px] font-mono text-neutral-500">
+                    <span>Stage {step.num} of 08</span>
+                    {index < LIFECYCLE_STEPS.length - 1 ? (
+                      <span aria-hidden="true">→ {LIFECYCLE_STEPS[index + 1].name}</span>
+                    ) : (
+                      <span>Generational Continuity</span>
+                    )}
                   </div>
                 </div>
               );
             })}
           </div>
-        </div>
-      </section>
 
-      {/* 3. PROJECT WORKFLOW / LIFECYCLE */}
-      <section
-        id="lifecycle"
-        className="w-full py-14 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-white border-b border-neutral-200/80"
-      >
-        <div className="mx-auto max-w-7xl">
-          <div className="max-w-xl mb-8">
-            <h2
-              style={{ textWrap: 'balance' }}
-              className="font-display text-2xl sm:text-3xl font-normal text-neutral-900 tracking-tight"
-            >
-              Project Lifecycle Stages.
-            </h2>
-            <p className="mt-2 text-sm sm:text-base text-neutral-600">
-              Select a stage to preview how academic progress is tracked across the semester.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-xl bg-neutral-100 border border-neutral-200">
-            {(['Idea', 'Planning', 'Development', 'Review', 'Completed'] as EraProjectStatus[]).map(
-              (stage) => {
-                const isSelected = selectedStage === stage;
-                return (
-                  <button
-                    key={stage}
-                    type="button"
-                    onClick={() => setSelectedStage(stage)}
-                    className={`flex-1 min-w-[110px] py-2 px-3.5 rounded-lg text-xs sm:text-sm font-semibold transition-colors cursor-pointer whitespace-nowrap ${
-                      isSelected
-                        ? 'bg-neutral-900 text-white'
-                        : 'text-neutral-700 hover:bg-white/80'
-                    }`}
-                  >
-                    {stage}
-                  </button>
-                );
-              }
-            )}
-          </div>
-
-          <div className="mt-4 p-5 sm:p-6 rounded-2xl bg-white border border-neutral-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div className="space-y-1">
-              <div className="text-xs text-neutral-500">
-                <span>Stage: {selectedStage}</span>
-                <span aria-hidden="true"> · </span>
-                <span>Key Deliverable: {stageDetail.deliverable}</span>
+          {/* Critical Project Lifecycle Rule Callout (Review is Optional) */}
+          <div className="mt-6 p-5 sm:p-6 rounded-2xl bg-white border border-neutral-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex items-start gap-3.5">
+              <div className="w-9 h-9 rounded-xl bg-neutral-100 text-neutral-900 flex items-center justify-center shrink-0 mt-0.5">
+                <Info className="w-4 h-4" />
               </div>
-              <div className="font-display text-base sm:text-lg font-semibold text-neutral-900">
-                {stageDetail.summary}
-              </div>
-              <div className="text-xs text-neutral-500">
-                Demo Project Example: {stageDetail.sample}
+              <div className="space-y-1">
+                <div className="text-xs font-mono text-neutral-500">
+                  Selected Stage {activeStepData.num}: <strong>{activeStepData.name}</strong> —{' '}
+                  {activeStepData.description}
+                </div>
+                <h4 className="font-display text-sm sm:text-base font-semibold text-neutral-900">
+                  Review is optional and never blocks publishing a project.
+                </h4>
+                <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed">
+                  Users can create, upload, save, and publish projects immediately without faculty review or prior approval. The lifecycle represents the possible journey of a project, not a mandatory approval pipeline.
+                </p>
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={() =>
-                onExploreStage ? onExploreStage(selectedStage) : onGetStarted('STUDENT')
-              }
-              className="self-start md:self-center px-5 py-2.5 rounded-xl bg-neutral-900 text-white text-xs font-semibold hover:bg-neutral-800 transition-colors cursor-pointer whitespace-nowrap shrink-0"
-            >
-              Open in Demo Workspace
-            </button>
+            <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+              <button
+                type="button"
+                onClick={onExploreProjects}
+                className="px-4 py-2.5 rounded-xl border border-neutral-300 bg-white text-xs font-semibold text-neutral-900 hover:bg-neutral-50 transition-colors cursor-pointer whitespace-nowrap"
+              >
+                Explore Projects
+              </button>
+              <button
+                type="button"
+                onClick={() => onGetStarted('STUDENT')}
+                className="px-4 py-2.5 rounded-xl bg-neutral-900 text-white text-xs font-semibold hover:bg-neutral-800 transition-colors cursor-pointer whitespace-nowrap"
+              >
+                Publish a Project
+              </button>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* 4. FAQ SECTION */}
+      {/* =================================================================== */}
+      {/* SECTION 6: ANSWERS & CLARITY — FREQUENTLY ASKED QUESTIONS           */}
+      {/* =================================================================== */}
       <FAQSection />
     </>
   );
