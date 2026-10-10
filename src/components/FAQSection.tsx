@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
 import { Plus, Minus } from 'lucide-react';
 
 interface FAQItem {
@@ -9,49 +8,44 @@ interface FAQItem {
 
 const FAQ_ITEMS: FAQItem[] = [
   {
-    question: 'What is ProjectVerse?',
+    question: 'What is Project Era?',
     answer:
-      'ProjectVerse is an open platform designed to make academic capstones, research projects, and developer prototypes permanently discoverable, verifiable, and continuable. Instead of student codebases disappearing upon graduation, ProjectVerse provides an immutable Project Passport, generational project lineage, and verified proofs of work across 140+ campuses.',
+      'Project Era is an academic project workspace for college communities that brings project planning, team coordination, task deadlines, documentation records, and faculty feedback into one organized platform.',
   },
   {
-    question: 'Who can use ProjectVerse?',
+    question: 'Who can use Project Era?',
     answer:
-      'Anyone in the technical and academic ecosystem: undergraduate and graduate students, alumni in industry, faculty guides and advisors, department heads (HODs), as well as open-source developers and independent researchers.',
+      'Project Era is designed for four academic roles: Students, Faculty supervisors, Heads of Department (HODs), and Alumni mentors.',
   },
   {
-    question: 'What is Project Passport?',
+    question: 'How do students manage their projects?',
     answer:
-      'A Project Passport is a permanent, cryptographically signed digital identity issued to every project on ProjectVerse. It includes a unique persistent identifier (e.g. PV-2026-CS-8942), verified contributor attributions, faculty supervisor sign-offs, and live evidence links that can be verified by employers or graduate admissions committees.',
+      'Students can create projects, define domains and technologies, add teammates with clear responsibilities, break milestones into tasks with due dates, and attach documentation records for review.',
   },
   {
-    question: 'What is Project Lineage?',
+    question: 'How can faculty review student projects?',
     answer:
-      'Project Lineage is a generational continuation framework that allows incoming batches of students to fork, maintain, and upgrade projects completed by prior graduating classes. Original creators retain permanent citation and attribution, while new students tackle high-level challenges rather than reinventing the wheel each year.',
+      'Faculty members can view assigned student projects, inspect submitted documentation and milestone progress, post structured feedback, and update review statuses such as Approved or Revisions Requested.',
   },
   {
-    question: 'How does verification work?',
+    question: 'What can HODs monitor?',
     answer:
-      'Verification utilizes a dual-key review workflow where official faculty advisors and department heads evaluate the project against standardized rubrics (technical feasibility, code quality, test coverage, and documentation). Once approved, a digital verification certificate and verification badge are attached to the project record.',
+      'HODs can view department-wide project summaries across every lifecycle stage, filter projects by department and status, identify delayed milestones or overdue tasks, and monitor pending academic reviews.',
   },
   {
-    question: 'Does ProjectVerse replace GitHub?',
+    question: 'Can alumni support student teams?',
     answer:
-      'No. ProjectVerse complements GitHub, GitLab, and other code hosts. Your source code, commits, and pull requests remain on GitHub. ProjectVerse provides the academic attribution, inter-campus discovery, faculty evaluation, cross-batch inheritance, and institutional credential layer on top of your repositories.',
+      'Yes. Alumni can share their industry skills, offer technical mentoring sessions on active projects, and respond to student collaboration and guidance requests without receiving faculty grading privileges.',
   },
   {
-    question: 'Can students from different colleges collaborate?',
+    question: 'Is Project Era free to use?',
     answer:
-      'Yes. ProjectVerse is completely borderless across institutions. Students from IITs, NITs, state universities, and private colleges can find one another through skill-based matching and form inter-collegiate teams on shared research initiatives.',
+      'This frontend preview of Project Era is freely accessible in your browser to explore role-specific dashboards and academic project workflows.',
   },
   {
-    question: 'Can alumni mentor students?',
+    question: 'How do I create an account?',
     answer:
-      'Absolutely. Alumni can register their industry expertise and mentor capstone teams from their alma mater or any other connected campus. They provide architectural reviews, production guidance, and can scout standout builders directly for engineering roles.',
-  },
-  {
-    question: 'Who can academically verify a project?',
-    answer:
-      'Formal academic verification is performed exclusively by authorized faculty guides and Department Heads (HODs) who have verified institutional credentials. Industry mentors can also provide technical endorsements, but institutional verification requires designated academic authority.',
+      'Click "Get Started" in the navigation bar, select your role (Student, Faculty, HOD, or Alumni), and complete the role-specific registration form.',
   },
 ];
 
@@ -63,73 +57,60 @@ export const FAQSection: React.FC = () => {
   };
 
   return (
-    <section id="faq" className="py-14 sm:py-18 lg:py-22 px-4 sm:px-6 lg:px-8 border-t border-neutral-200/80 bg-white">
+    <section
+      id="faq"
+      className="py-14 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-white"
+    >
       <div className="mx-auto max-w-3xl">
-        
-        {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
-          <div className="inline-flex items-center gap-2 rounded-full border border-neutral-300 bg-neutral-100 px-3.5 py-1 text-xs font-semibold tracking-wide text-neutral-700 uppercase mb-3.5 shadow-2xs">
-            Answers & Clarity
-          </div>
-          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-[40px] font-light text-neutral-900 tracking-tight leading-[1.15]">
-            Frequently Asked{' '}
-            <span className="relative inline-block">
-              <em className="text-[#e8860a] not-italic font-normal">Questions</em>
-              <span className="absolute bottom-1 left-0 right-0 h-[2.5px] rounded bg-[#fddfa0]"></span>
-            </span>
+        <div className="text-center max-w-xl mx-auto mb-10">
+          <h2
+            style={{ textWrap: 'balance' }}
+            className="font-display text-2xl sm:text-3xl lg:text-4xl font-normal text-neutral-900 tracking-tight"
+          >
+            Frequently Asked Questions
           </h2>
-          <p className="mt-3 text-sm sm:text-base text-neutral-600 leading-relaxed font-body">
-            Everything you need to know about the ProjectVerse platform, verification system, and cross-batch collaboration.
+          <p className="mt-2.5 text-sm sm:text-base text-neutral-600">
+            Clear answers about roles, project workflows, and academic reviews on Project Era.
           </p>
         </div>
 
-        {/* BatchBro-style FAQ List */}
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           {FAQ_ITEMS.map((item, idx) => {
             const isOpen = openIndex === idx;
             return (
               <div
-                key={idx}
-                className="overflow-hidden rounded-xl sm:rounded-2xl border border-neutral-200 bg-white transition-all duration-200 hover:border-neutral-300 shadow-2xs"
+                key={item.question}
+                className="rounded-xl border border-neutral-200 bg-white transition-colors hover:border-neutral-300"
               >
                 <button
+                  type="button"
                   onClick={() => toggleFAQ(idx)}
-                  className="flex w-full items-center justify-between gap-4 p-4 sm:p-5 text-left cursor-pointer focus:outline-none"
                   aria-expanded={isOpen}
+                  className="flex w-full items-center justify-between gap-4 p-4 sm:p-5 text-left cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900 rounded-xl"
                 >
-                  <span className="font-display text-[15px] sm:text-base md:text-[17px] font-medium text-neutral-900">
+                  <span className="font-display text-sm sm:text-base font-medium text-neutral-900">
                     {item.question}
                   </span>
-                  <div
-                    className={`flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-full border transition-all duration-200 ${
+                  <span
+                    className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border transition-colors ${
                       isOpen
                         ? 'border-neutral-900 bg-neutral-900 text-white'
-                        : 'border-neutral-200 bg-neutral-50 text-neutral-700 hover:bg-neutral-100'
+                        : 'border-neutral-200 bg-neutral-50 text-neutral-700'
                     }`}
                   >
                     {isOpen ? <Minus className="h-3.5 w-3.5" /> : <Plus className="h-3.5 w-3.5" />}
-                  </div>
+                  </span>
                 </button>
 
-                <AnimatePresence initial={false}>
-                  {isOpen && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2, ease: 'easeInOut' }}
-                    >
-                      <div className="border-t border-neutral-100 p-4 sm:p-5 pt-3 sm:pt-3.5 text-xs sm:text-[13.5px] md:text-sm leading-relaxed text-neutral-600 font-body">
-                        {item.answer}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                {isOpen && (
+                  <div className="border-t border-neutral-100 px-4 sm:px-5 pb-4 sm:pb-5 pt-3 text-xs sm:text-sm leading-relaxed text-neutral-600">
+                    {item.answer}
+                  </div>
+                )}
               </div>
             );
           })}
         </div>
-
       </div>
     </section>
   );

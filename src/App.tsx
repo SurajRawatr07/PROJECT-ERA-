@@ -92,17 +92,17 @@ export default function App() {
       setPublicPage('register');
       return;
     }
-    if (path === 'features') {
-      setPublicPage('features');
-      setTimeout(() => {
-        document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
-      }, 60);
-      return;
-    }
     if (path === 'how-it-works') {
       setPublicPage('how-it-works');
       setTimeout(() => {
         document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
+      }, 60);
+      return;
+    }
+    if (path === 'faq') {
+      setPublicPage('faq');
+      setTimeout(() => {
+        document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth' });
       }, 60);
       return;
     }
@@ -158,19 +158,19 @@ export default function App() {
       return;
     }
 
-    if (page === 'features') {
-      window.history.pushState(null, '', '/features');
-      setTimeout(() => {
-        document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
-      }, 50);
-      return;
-    }
-
     if (page === 'how-it-works') {
       window.history.pushState(null, '', '/how-it-works');
       setTimeout(() => {
         document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
-      }, 50);
+      }, 60);
+      return;
+    }
+
+    if (page === 'faq') {
+      window.history.pushState(null, '', '/faq');
+      setTimeout(() => {
+        document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth' });
+      }, 60);
       return;
     }
 
@@ -339,7 +339,7 @@ export default function App() {
   // PUBLIC WEBSITE & AUTHENTICATION PAGES
   // =========================================================================
   return (
-    <div className="min-h-screen bg-[#faf9f6] text-neutral-900 relative overflow-x-hidden font-body selection:bg-neutral-900 selection:text-white flex flex-col">
+    <div className="min-h-screen bg-white text-neutral-900 relative overflow-x-hidden font-body selection:bg-neutral-900 selection:text-white flex flex-col">
       <Navbar
         currentPage={publicPage}
         onSelectPage={handleSelectPublicPage}
@@ -348,7 +348,7 @@ export default function App() {
       />
 
       {publicPage === 'login' || publicPage === 'register' ? (
-        <main className="flex-1">
+        <main className="flex-1 bg-white">
           <ProjectEraAuthPage
             mode={publicPage === 'login' ? 'login' : 'register'}
             initialRole={authRolePreselect}
@@ -358,14 +358,14 @@ export default function App() {
           />
         </main>
       ) : (
-        <main className="flex-1 w-full">
-          {/* Hero with Preserved Original Homepage Animation */}
+        <main className="flex-1 w-full bg-white">
+          {/* Hero with Clean Side Animation (Zero Text, Zero Icons) */}
           <Hero
             onGetStartedClick={() => handleOpenRegister('STUDENT')}
-            onExploreHowItWorksClick={() => handleSelectPublicPage('how-it-works')}
+            onHowItWorksClick={() => handleSelectPublicPage('how-it-works')}
           />
 
-          {/* Problem, Solution, How It Works, Role Benefits, Lifecycle & Final CTA */}
+          {/* 5-Step How It Works, 4 Roles, Lifecycle, FAQ */}
           <ProjectEraSections
             onGetStarted={(role) => handleOpenRegister(role || 'STUDENT')}
             onExploreStage={handleExploreStageInDemo}

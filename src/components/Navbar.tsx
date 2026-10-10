@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 
-export type PublicPage = 'home' | 'features' | 'how-it-works' | 'login' | 'register';
+export type PublicPage = 'home' | 'how-it-works' | 'faq' | 'login' | 'register';
 
 interface NavbarProps {
   currentPage?: PublicPage;
@@ -17,8 +17,8 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { id: 'home', label: 'Home' },
-  { id: 'features', label: 'Features' },
   { id: 'how-it-works', label: 'How It Works' },
+  { id: 'faq', label: 'FAQ' },
   { id: 'login', label: 'Login' },
 ];
 
@@ -55,7 +55,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <>
-      <header className="sticky top-0 z-50 border-b border-neutral-200 bg-white/95 backdrop-blur-md">
+      <header className="sticky top-0 z-50 border-b border-neutral-200/80 bg-white/95 backdrop-blur-md">
         <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-8 px-4 sm:px-6 lg:px-8">
           {/* Zone 1: Single text element wordmark */}
           <button
@@ -66,7 +66,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             Project Era
           </button>
 
-          {/* Zone 2: 4 concise single-line text navigation links */}
+          {/* Zone 2: Clean single-line text navigation links */}
           <nav className="hidden md:flex items-center gap-7 text-sm font-medium text-neutral-600">
             {NAV_ITEMS.map(({ id, label }) => {
               const isActive = currentPage === id;
@@ -92,7 +92,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               type="button"
               onClick={onOpenRegister}
-              className="rounded-xl bg-neutral-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-neutral-800 whitespace-nowrap shrink-0 cursor-pointer"
+              className="rounded-xl bg-neutral-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-neutral-800 whitespace-nowrap shrink-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900"
             >
               Get Started
             </button>
@@ -103,7 +103,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="md:hidden p-2 rounded-lg text-neutral-800 hover:bg-neutral-100 transition-colors cursor-pointer"
               aria-label="Toggle Navigation Menu"
             >
-              {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
         </div>
@@ -112,7 +112,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div className="md:hidden border-b border-neutral-200 bg-white px-5 py-5 shadow-lg fixed top-16 left-0 right-0 z-40">
-          <nav className="flex flex-col gap-1.5">
+          <nav className="flex flex-col gap-1">
             {NAV_ITEMS.map(({ id, label }) => {
               const isActive = currentPage === id;
               return (
@@ -120,7 +120,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   key={id}
                   type="button"
                   onClick={() => handleNavClick(id)}
-                  className={`flex items-center justify-between px-3.5 py-3 rounded-xl text-left text-sm font-medium transition-colors cursor-pointer ${
+                  className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-left text-sm font-medium transition-colors cursor-pointer ${
                     isActive
                       ? 'bg-neutral-100 text-neutral-900 font-semibold'
                       : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900'
@@ -138,7 +138,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   setMobileMenuOpen(false);
                   onOpenRegister();
                 }}
-                className="w-full py-3 rounded-xl bg-neutral-900 text-sm font-semibold text-white hover:bg-neutral-800 cursor-pointer"
+                className="w-full py-2.5 rounded-xl bg-neutral-900 text-sm font-semibold text-white hover:bg-neutral-800 cursor-pointer"
               >
                 Get Started
               </button>

@@ -223,7 +223,7 @@ export const ProjectEraAuthPage: React.FC<ProjectEraAuthPageProps> = ({
   };
 
   return (
-    <div className="min-h-[calc(100vh-64px)] w-full bg-[#faf9f6] py-10 sm:py-14 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-[calc(100vh-64px)] w-full bg-white py-10 sm:py-14 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-3xl">
         {/* Top Back Button */}
         <button

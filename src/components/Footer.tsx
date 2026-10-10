@@ -14,142 +14,66 @@ export const Footer: React.FC<FooterProps> = ({
   onOpenRegister,
 }) => {
   return (
-    <footer className="w-full border-t border-neutral-200 bg-white pt-14 pb-10 px-4 sm:px-6 lg:px-8 text-neutral-900">
-      <div className="mx-auto max-w-7xl">
-        <div className="grid grid-cols-2 md:grid-cols-12 gap-8 pb-10 border-b border-neutral-200">
-          {/* Brand Column */}
-          <div className="col-span-2 md:col-span-5 flex flex-col items-start pr-0 md:pr-6">
-            <span className="font-display text-xl font-bold tracking-tight text-neutral-900">
+    <footer className="w-full border-t border-neutral-200 bg-white py-10 px-4 sm:px-6 lg:px-8 text-neutral-900">
+      <div className="mx-auto max-w-7xl flex flex-col gap-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-neutral-200/80">
+          {/* Wordmark + One-line description */}
+          <div className="space-y-1">
+            <button
+              type="button"
+              onClick={() => onSelectPage('home')}
+              className="font-display text-lg font-bold tracking-tight text-neutral-900 cursor-pointer"
+            >
               Project Era
-            </span>
-
-            <p className="mt-3 text-sm text-neutral-600 leading-relaxed max-w-sm">
-              An academic project workspace for college communities—organizing project planning, teamwork, milestones, documentation, and faculty feedback in one place.
-            </p>
-
-            <p className="mt-4 text-xs text-neutral-500">
-              Frontend Demonstration Environment · Client-side interactive preview
+            </button>
+            <p className="text-xs sm:text-sm text-neutral-600">
+              An organized academic workspace for college project planning, teamwork, and faculty reviews.
             </p>
           </div>
 
-          {/* Account Types */}
-          <div className="col-span-1 md:col-span-3">
-            <h4 className="font-display text-xs font-bold tracking-wider text-neutral-900 uppercase mb-3.5">
-              Account Types
-            </h4>
-            <ul className="space-y-2 text-sm text-neutral-600">
-              <li>
-                <button
-                  type="button"
-                  onClick={() => onOpenRegister('STUDENT')}
-                  className="hover:text-neutral-900 transition-colors cursor-pointer"
-                >
-                  Student Workspace
-                </button>
-              </li>
-              <li>
-                <button
-                  type="button"
-                  onClick={() => onOpenRegister('FACULTY')}
-                  className="hover:text-neutral-900 transition-colors cursor-pointer"
-                >
-                  Faculty Review Portal
-                </button>
-              </li>
-              <li>
-                <button
-                  type="button"
-                  onClick={() => onOpenRegister('HOD')}
-                  className="hover:text-neutral-900 transition-colors cursor-pointer"
-                >
-                  HOD Department Overview
-                </button>
-              </li>
-              <li>
-                <button
-                  type="button"
-                  onClick={() => onOpenRegister('ALUMNI')}
-                  className="hover:text-neutral-900 transition-colors cursor-pointer"
-                >
-                  Alumni Mentorship
-                </button>
-              </li>
-            </ul>
-          </div>
-
-          {/* Navigation */}
-          <div className="col-span-1 md:col-span-2">
-            <h4 className="font-display text-xs font-bold tracking-wider text-neutral-900 uppercase mb-3.5">
-              Navigation
-            </h4>
-            <ul className="space-y-2 text-sm text-neutral-600">
-              <li>
-                <button
-                  type="button"
-                  onClick={() => onSelectPage('home')}
-                  className="hover:text-neutral-900 transition-colors cursor-pointer"
-                >
-                  Home
-                </button>
-              </li>
-              <li>
-                <button
-                  type="button"
-                  onClick={() => onSelectPage('features')}
-                  className="hover:text-neutral-900 transition-colors cursor-pointer"
-                >
-                  Features
-                </button>
-              </li>
-              <li>
-                <button
-                  type="button"
-                  onClick={() => onSelectPage('how-it-works')}
-                  className="hover:text-neutral-900 transition-colors cursor-pointer"
-                >
-                  How It Works
-                </button>
-              </li>
-            </ul>
-          </div>
-
-          {/* Access */}
-          <div className="col-span-2 sm:col-span-1 md:col-span-2">
-            <h4 className="font-display text-xs font-bold tracking-wider text-neutral-900 uppercase mb-3.5">
-              Access
-            </h4>
-            <ul className="space-y-2 text-sm text-neutral-600">
-              <li>
-                <button
-                  type="button"
-                  onClick={() => onOpenLogin()}
-                  className="hover:text-neutral-900 transition-colors font-medium text-neutral-900 cursor-pointer"
-                >
-                  Login
-                </button>
-              </li>
-              <li>
-                <button
-                  type="button"
-                  onClick={() => onOpenRegister()}
-                  className="hover:text-neutral-900 transition-colors font-semibold text-neutral-900 cursor-pointer"
-                >
-                  Get Started
-                </button>
-              </li>
-            </ul>
-          </div>
+          {/* Single clean navigation & account link row */}
+          <nav className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs sm:text-sm font-medium text-neutral-600">
+            <button
+              type="button"
+              onClick={() => onSelectPage('home')}
+              className="hover:text-neutral-900 transition-colors cursor-pointer whitespace-nowrap"
+            >
+              Home
+            </button>
+            <button
+              type="button"
+              onClick={() => onSelectPage('how-it-works')}
+              className="hover:text-neutral-900 transition-colors cursor-pointer whitespace-nowrap"
+            >
+              How It Works
+            </button>
+            <button
+              type="button"
+              onClick={() => onSelectPage('faq')}
+              className="hover:text-neutral-900 transition-colors cursor-pointer whitespace-nowrap"
+            >
+              FAQ
+            </button>
+            <button
+              type="button"
+              onClick={() => onOpenLogin()}
+              className="hover:text-neutral-900 transition-colors cursor-pointer whitespace-nowrap"
+            >
+              Login
+            </button>
+            <button
+              type="button"
+              onClick={() => onOpenRegister()}
+              className="font-semibold text-neutral-900 hover:text-[#b45309] transition-colors cursor-pointer whitespace-nowrap"
+            >
+              Register
+            </button>
+          </nav>
         </div>
 
-        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-500">
-          <div className="flex flex-wrap items-center gap-2">
-            <span>© 2026 Project Era. All rights reserved.</span>
-            <span aria-hidden="true">·</span>
-            <span>College Academic Project Platform</span>
-          </div>
-          <div>
-            <span>Demonstration Mode — No server-side persistence claimed</span>
-          </div>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-neutral-500">
+          <span>© 2026 Project Era. All rights reserved.</span>
+          <span>Students · Faculty · HODs · Alumni</span>
         </div>
       </div>
     </footer>

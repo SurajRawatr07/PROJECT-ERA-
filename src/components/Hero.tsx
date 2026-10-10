@@ -1,24 +1,23 @@
 import React from 'react';
-import { ArrowRight } from 'lucide-react';
 import { HeroAnimation } from './hero/HeroAnimation';
 
 interface HeroProps {
   onGetStartedClick: () => void;
-  onExploreHowItWorksClick: () => void;
+  onHowItWorksClick: () => void;
 }
 
 export const Hero: React.FC<HeroProps> = ({
   onGetStartedClick,
-  onExploreHowItWorksClick,
+  onHowItWorksClick,
 }) => {
   return (
-    <section className="relative w-full overflow-hidden px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20 bg-[#faf9f6] border-b border-neutral-200/80">
+    <section className="relative w-full overflow-hidden px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20 bg-white border-b border-neutral-200/80">
       <div className="relative z-10 mx-auto max-w-7xl">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 xl:gap-12 items-center">
-          {/* LEFT COLUMN: Project Era Hero Copy & Actions */}
+          {/* LEFT COLUMN: Concise Hero Copy & Actions */}
           <div className="lg:col-span-7 flex flex-col items-start text-left">
-            <div className="text-xs font-semibold tracking-widest uppercase text-neutral-600 mb-3">
-              PROJECT ERA · Academic Project Workspace
+            <div className="text-xs font-semibold tracking-widest uppercase text-neutral-500 mb-3">
+              PROJECT ERA
             </div>
 
             <h1
@@ -32,8 +31,8 @@ export const Hero: React.FC<HeroProps> = ({
               </span>
             </h1>
 
-            <p className="mt-4 max-w-[600px] text-base sm:text-[17px] text-neutral-600 leading-[1.65] font-body">
-              Plan college projects, collaborate with teammates, receive faculty guidance, and track your progress through one organized academic workspace.
+            <p className="mt-4 max-w-[540px] text-base sm:text-[17px] text-neutral-600 leading-[1.6] font-body">
+              Plan college projects, work with your team, receive faculty guidance, and track progress in one organized workspace.
             </p>
 
             {/* Primary & Secondary CTAs */}
@@ -41,37 +40,23 @@ export const Hero: React.FC<HeroProps> = ({
               <button
                 type="button"
                 onClick={onGetStartedClick}
-                className="group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-900 px-6 sm:px-7 py-3 text-sm sm:text-[15px] font-semibold text-white transition-all duration-150 hover:bg-neutral-800 cursor-pointer whitespace-nowrap shrink-0"
+                className="inline-flex items-center justify-center rounded-xl bg-neutral-900 px-6 sm:px-7 py-3 text-sm sm:text-[15px] font-semibold text-white transition-colors duration-150 hover:bg-neutral-800 cursor-pointer whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900"
               >
-                <span>Get Started</span>
-                <ArrowRight className="h-4 w-4 transition-transform duration-150 group-hover:translate-x-1" />
+                Get Started
               </button>
 
               <button
                 type="button"
-                onClick={onExploreHowItWorksClick}
-                className="inline-flex items-center justify-center rounded-xl bg-white border border-neutral-300 px-6 sm:px-7 py-3 text-sm sm:text-[15px] font-semibold text-neutral-800 transition-all duration-150 hover:border-neutral-400 hover:bg-neutral-50 cursor-pointer whitespace-nowrap shrink-0"
+                onClick={onHowItWorksClick}
+                className="inline-flex items-center justify-center rounded-xl bg-white border border-neutral-300 px-6 sm:px-7 py-3 text-sm sm:text-[15px] font-semibold text-neutral-800 transition-colors duration-150 hover:border-neutral-400 hover:bg-neutral-50 cursor-pointer whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900"
               >
-                Explore How It Works
+                How It Works
               </button>
-            </div>
-
-            {/* Clean unboxed metadata discipline */}
-            <div className="mt-8 pt-5 border-t border-neutral-200/80 flex flex-wrap items-center gap-2 text-xs text-neutral-500 font-medium">
-              <span>Built for College Communities</span>
-              <span aria-hidden="true">·</span>
-              <span>Students</span>
-              <span aria-hidden="true">·</span>
-              <span>Faculty</span>
-              <span aria-hidden="true">·</span>
-              <span>HODs</span>
-              <span aria-hidden="true">·</span>
-              <span>Alumni</span>
             </div>
           </div>
 
-          {/* RIGHT COLUMN: Preserved Original Homepage Animation */}
-          <div className="lg:col-span-5 flex items-center justify-center w-full mt-2 lg:mt-0">
+          {/* RIGHT COLUMN: Clean Side Animation (Zero Text, Zero Icons) */}
+          <div className="lg:col-span-5 flex items-center justify-center w-full mt-2 lg:mt-0 bg-transparent">
             <HeroAnimation />
           </div>
         </div>
