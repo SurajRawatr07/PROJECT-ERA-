@@ -188,7 +188,12 @@ export const Footer: React.FC<FooterProps> = ({
         {/* Bottom Copyright Row */}
         <div className="pt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-neutral-500">
           <span>© {currentYear} Project Era. All rights reserved.</span>
-          <span>Open Academic Ecosystem · Student · Faculty · HOD · Alumni</span>
+          <span>Open Academic Ecosystem</span>
+        </div>
+
+        {/* Creator Credit Line */}
+        <div className="mt-4 pt-4 border-t border-neutral-200/60 text-center text-[11px] sm:text-xs text-neutral-400 font-medium tracking-wide">
+          Made by Roshan
         </div>
       </div>
     </footer>

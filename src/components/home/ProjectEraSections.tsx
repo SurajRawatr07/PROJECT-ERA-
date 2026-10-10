@@ -15,7 +15,6 @@ import {
   FolderSync,
   GitFork,
   TrendingUp,
-  Info,
   X
 } from 'lucide-react';
 import { EraAccountType } from '../../types/projectEra';
@@ -169,7 +168,6 @@ export const ProjectEraSections: React.FC<HomeSectionsProps> = ({
   onExploreProjects
 }) => {
   const [activeRole, setActiveRole] = useState<EraAccountType | null>('STUDENT');
-  const [selectedLifecycleStep, setSelectedLifecycleStep] = useState<string>('01');
 
   useEffect(() => {
     if (selectedRoleFromNav) {
@@ -178,8 +176,6 @@ export const ProjectEraSections: React.FC<HomeSectionsProps> = ({
   }, [selectedRoleFromNav]);
 
   const activeRoleData = FOUR_ROLES.find((r) => r.id === activeRole) || null;
-  const activeStepData =
-    LIFECYCLE_STEPS.find((s) => s.num === selectedLifecycleStep) || LIFECYCLE_STEPS[0];
 
   const handleToggleRole = (roleId: EraAccountType) => {
     setActiveRole((prev) => (prev === roleId ? null : roleId));
@@ -414,24 +410,11 @@ export const ProjectEraSections: React.FC<HomeSectionsProps> = ({
           >
             {LIFECYCLE_STEPS.map((step, index) => {
               const Icon = step.icon;
-              const isSelected = selectedLifecycleStep === step.num;
               return (
                 <div
                   key={step.num}
                   role="listitem"
-                  tabIndex={0}
-                  onClick={() => setSelectedLifecycleStep(step.num)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      setSelectedLifecycleStep(step.num);
-                    }
-                  }}
-                  className={`relative p-5 rounded-2xl bg-white border transition-colors duration-150 flex flex-col justify-between cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900 ${
-                    isSelected
-                      ? 'border-neutral-900 ring-1 ring-neutral-900'
-                      : 'border-neutral-200 hover:border-neutral-400'
-                  }`}
+                  className="relative p-5 rounded-2xl bg-white border border-neutral-200 hover:border-neutral-400 transition-colors duration-150 flex flex-col justify-between"
                 >
                   <div>
                     <div className="flex items-center justify-between gap-2 mb-3.5">
@@ -445,13 +428,7 @@ export const ProjectEraSections: React.FC<HomeSectionsProps> = ({
                           </span>
                         )}
                       </div>
-                      <div
-                        className={`w-9 h-9 rounded-xl flex items-center justify-center transition-colors ${
-                          isSelected
-                            ? 'bg-neutral-900 text-white'
-                            : 'bg-neutral-100 text-neutral-800'
-                        }`}
-                      >
+                      <div className="w-9 h-9 rounded-xl bg-neutral-100 text-neutral-800 flex items-center justify-center">
                         <Icon className="w-4 h-4" />
                       </div>
                     </div>
@@ -475,44 +452,6 @@ export const ProjectEraSections: React.FC<HomeSectionsProps> = ({
                 </div>
               );
             })}
-          </div>
-
-          {/* Critical Project Lifecycle Rule Callout (Review is Optional) */}
-          <div className="mt-6 p-5 sm:p-6 rounded-2xl bg-white border border-neutral-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div className="flex items-start gap-3.5">
-              <div className="w-9 h-9 rounded-xl bg-neutral-100 text-neutral-900 flex items-center justify-center shrink-0 mt-0.5">
-                <Info className="w-4 h-4" />
-              </div>
-              <div className="space-y-1">
-                <div className="text-xs font-mono text-neutral-500">
-                  Selected Stage {activeStepData.num}: <strong>{activeStepData.name}</strong> —{' '}
-                  {activeStepData.description}
-                </div>
-                <h4 className="font-display text-sm sm:text-base font-semibold text-neutral-900">
-                  Review is optional and never blocks publishing a project.
-                </h4>
-                <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed">
-                  Users can create, upload, save, and publish projects immediately without faculty review or prior approval. The lifecycle represents the possible journey of a project, not a mandatory approval pipeline.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-              <button
-                type="button"
-                onClick={onExploreProjects}
-                className="px-4 py-2.5 rounded-xl border border-neutral-300 bg-white text-xs font-semibold text-neutral-900 hover:bg-neutral-50 transition-colors cursor-pointer whitespace-nowrap"
-              >
-                Explore Projects
-              </button>
-              <button
-                type="button"
-                onClick={() => onGetStarted('STUDENT')}
-                className="px-4 py-2.5 rounded-xl bg-neutral-900 text-white text-xs font-semibold hover:bg-neutral-800 transition-colors cursor-pointer whitespace-nowrap"
-              >
-                Publish a Project
-              </button>
-            </div>
           </div>
         </div>
       </section>
