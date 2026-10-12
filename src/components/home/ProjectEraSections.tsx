@@ -203,7 +203,6 @@ export const ProjectEraSections: React.FC<HomeSectionsProps> = ({
               Who Can Use{' '}
               <span className="relative inline-block">
                 <em className="text-[#b45309] not-italic font-normal">Project Era?</em>
-                <span className="absolute bottom-1 left-0 right-0 h-[2.5px] rounded bg-amber-200/90" />
               </span>
             </h2>
             <p className="mt-3 text-sm sm:text-base text-neutral-600 leading-relaxed font-body">
@@ -391,7 +390,6 @@ export const ProjectEraSections: React.FC<HomeSectionsProps> = ({
               From Genesis to Generational{' '}
               <span className="relative inline-block">
                 <em className="text-[#b45309] not-italic font-normal">Evolution</em>
-                <span className="absolute bottom-1 left-0 right-0 h-[2.5px] rounded bg-amber-200/90" />
               </span>
             </h2>
             <p className="mt-3 text-sm sm:text-base font-medium text-neutral-800">

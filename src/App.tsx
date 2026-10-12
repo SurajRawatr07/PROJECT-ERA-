@@ -593,7 +593,6 @@ export default function App() {
           {/* 2. Welcome to Project Era Hero Section */}
           <Hero
             isAuthenticated={Boolean(currentUser)}
-            onExploreProjectsClick={() => handleSelectPublicPage('explore')}
             onGetStartedClick={() => handleOpenRegister('STUDENT')}
           />
 

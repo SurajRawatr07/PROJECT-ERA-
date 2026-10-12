@@ -32,7 +32,6 @@ export const ExploreEcosystemBanner: React.FC<ExploreEcosystemBannerProps> = ({
                 Explore the Project{' '}
                 <span className="relative inline-block">
                   <em className="text-[#e8860a] not-italic font-normal">Ecosystem</em>
-                  <span className="absolute bottom-1 left-0 right-0 h-[2.5px] rounded bg-[#fddfa0]"></span>
                 </span>
               </h3>
               <p className="mt-3 text-xs sm:text-sm md:text-[14.5px] text-neutral-600 leading-relaxed font-body">

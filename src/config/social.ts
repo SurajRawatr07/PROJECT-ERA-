@@ -1,5 +1,5 @@
 /**
- * Centralized Social & Creator URLs for ProjectVerse
+ * Centralized Social & Creator URLs for Project Era
  * Allows easy modification and prevents broken or invented URLs.
  */
 export const GITHUB_URL = 'https://github.com/SurajRawatr07';

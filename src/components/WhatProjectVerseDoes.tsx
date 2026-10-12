@@ -101,7 +101,6 @@ export const WhatProjectVerseDoes: React.FC<WhatProjectVerseDoesProps> = ({
             From Genesis to Generational{' '}
             <span className="relative inline-block">
               <em className="text-[#e8860a] not-italic font-normal">Evolution</em>
-              <span className="absolute bottom-1 left-0 right-0 h-[2.5px] rounded bg-[#fddfa0]"></span>
             </span>
           </h2>
           <div className="mt-3 px-3 py-1 bg-amber-50 rounded-full inline-block border border-amber-200 text-xs font-mono font-bold text-amber-950">

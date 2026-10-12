@@ -1,15 +1,13 @@
 import React from 'react';
-import { ArrowRight, Compass } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { HeroAnimation } from './hero/HeroAnimation';
 
 interface HeroProps {
-  onExploreProjectsClick: () => void;
   onGetStartedClick: () => void;
   isAuthenticated?: boolean;
 }
 
 export const Hero: React.FC<HeroProps> = ({
-  onExploreProjectsClick,
   onGetStartedClick,
   isAuthenticated = false
 }) => {
@@ -17,7 +15,7 @@ export const Hero: React.FC<HeroProps> = ({
     <section className="relative w-full overflow-hidden px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-22 bg-white border-b border-neutral-200/80">
       <div className="mx-auto max-w-6xl">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-          {/* LEFT COLUMN: Welcome to Project Era Copy & Primary Actions */}
+          {/* LEFT COLUMN: Welcome to Project Era Copy & Primary CTA */}
           <div className="lg:col-span-6 flex flex-col items-start text-left">
             <div className="text-xs font-semibold tracking-widest uppercase text-neutral-500 mb-3">
               ACADEMIC PROJECT PLATFORM
@@ -30,7 +28,6 @@ export const Hero: React.FC<HeroProps> = ({
               Welcome to{' '}
               <span className="relative inline-block whitespace-nowrap">
                 <em className="text-[#b45309] not-italic font-normal">Project Era</em>
-                <span className="absolute bottom-1 left-0 right-0 h-[3px] rounded bg-amber-200/90" />
               </span>
             </h1>
 
@@ -43,21 +40,12 @@ export const Hero: React.FC<HeroProps> = ({
               </p>
             </div>
 
-            {/* Functional Buttons: Explore Projects & Get Started */}
-            <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 w-full sm:w-auto">
-              <button
-                type="button"
-                onClick={onExploreProjectsClick}
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-900 px-6 sm:px-7 py-3.5 text-sm sm:text-[15px] font-semibold text-white transition-colors duration-150 hover:bg-neutral-800 cursor-pointer whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900"
-              >
-                <Compass className="w-4 h-4 shrink-0" />
-                <span>Explore Projects</span>
-              </button>
-
+            {/* Primary Hero CTA: Get Started */}
+            <div className="mt-8 flex items-center w-full sm:w-auto">
               <button
                 type="button"
                 onClick={onGetStartedClick}
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-white border border-neutral-300 px-6 sm:px-7 py-3.5 text-sm sm:text-[15px] font-semibold text-neutral-900 transition-colors duration-150 hover:border-neutral-400 hover:bg-neutral-50 cursor-pointer whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900"
+                className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-neutral-900 px-7 py-3.5 text-sm sm:text-[15px] font-semibold text-white transition-colors duration-150 hover:bg-neutral-800 cursor-pointer whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900"
               >
                 <span>{isAuthenticated ? 'Go to Dashboard' : 'Get Started'}</span>
                 <ArrowRight className="w-4 h-4 shrink-0" />
@@ -65,7 +53,7 @@ export const Hero: React.FC<HeroProps> = ({
             </div>
           </div>
 
-          {/* RIGHT COLUMN: Original Restored Homepage Animation */}
+          {/* RIGHT COLUMN: Animated Developer Team Hero Illustration */}
           <div className="lg:col-span-6 w-full flex items-center justify-center">
             <HeroAnimation />
           </div>
